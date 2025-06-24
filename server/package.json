@@ -1,0 +1,41 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "college",
+    "system",
+    "react",
+    "nodejs",
+    "fullstack",
+    "express",
+    "javascript",
+    "collegemanagement",
+    "management"
+  ],
+  "homepage": "https://github.com/yogeshrjk/college-management-system#readme",
+  "bugs": {
+    "url": "https://github.com/yogeshrjk/college-management-system/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yogeshrjk/college-management-system.git"
+  },
+  "license": "ISC",
+  "author": "Yogesh Rajak",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.7.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.16.0",
+    "multer": "^2.0.1",
+    "multer-storage-cloudinary": "^4.0.0"
+  }
+}
