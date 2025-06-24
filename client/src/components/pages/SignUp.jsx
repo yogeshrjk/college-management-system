@@ -1,11 +1,90 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { GraduationCap } from "lucide-react";
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [alert, setAlert] = useState({ type: "", message: "" });
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    dob: "",
+    email: "",
+    gender: "",
+    password: "",
+    confirmPassword: "",
+    profilePic: "",
+  });
+  // formData.append("profilePic", selectedFile);
+  // axios.post("http://192.168.31.246:8000/api/users/upload-profile", formData, {
+  //   headers: { "Content-Type": "multipart/form-data" },
+  // });
+  useEffect(() => {
+    if (alert.message) {
+      const timer = setTimeout(() => {
+        setAlert({ type: "", message: "" });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [alert]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (formData.password !== formData.confirmPassword) {
+        setAlert({ type: "error", message: "Passwords do not match" });
+        return;
+      }
+      const data = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key !== "confirmPassword") {
+          data.append(key, value);
+        }
+      });
+      if (selectedFile) {
+        data.append("profilePic", selectedFile);
+      }
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/users/signup`,
+        data,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      console.log(res.data);
+      setAlert({ type: "success", message: "Signup successful!" });
+    } catch (err) {
+      setAlert({
+        type: "error",
+        message: err.response?.data || "Signup failed. Try again.",
+      });
+      console.error("Signup error:", err.response?.data || err.message);
+    }
+  };
+
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex rounded-md shadow-lg max-w-3xl p-5 items-center bg-white w-full sm:w-auto h-screen sm:h-auto">
+      {alert.message && (
+        <div
+          className={`absolute top-5 p-2 px-10 mb-4 text-sm font-medium text-center rounded ${
+            alert.type === "success"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {alert.message}
+        </div>
+      )}
+      <div className="flex sm:py-10 rounded-2xl shadow-lg items-center bg-white w-full sm:w-auto h-screen sm:h-auto">
         <div className="w-full px-8 md:px-16">
           <div className="flex gap-2 justify-center items-center">
             <GraduationCap className="w-8 h-8 text-[#103D46]" />
@@ -13,7 +92,7 @@ export default function Register() {
               MyCampus
             </span>
           </div>
-          <form className="flex flex-col gap-4 mt-6">
+          <form className="flex flex-col gap-4 mt-8" onSubmit={handleSubmit}>
             {/* First Name & Last Name */}
             <div className="flex gap-4">
               <div className="w-1/2">
@@ -25,6 +104,8 @@ export default function Register() {
                   type="text"
                   placeholder="e.g. John"
                   required
+                  name="firstName"
+                  onChange={handleChange}
                 />
               </div>
               <div className="w-1/2">
@@ -36,6 +117,8 @@ export default function Register() {
                   type="text"
                   placeholder="e.g. Doe"
                   required
+                  name="lastName"
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -51,6 +134,8 @@ export default function Register() {
                   type="tel"
                   placeholder="+91 9876543210"
                   required
+                  name="phoneNumber"
+                  onChange={handleChange}
                 />
               </div>
               <div className="w-1/2">
@@ -61,6 +146,8 @@ export default function Register() {
                   className="p-1 rounded-sm text-sm border w-full text-gray-700"
                   type="date"
                   required
+                  name="dob"
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -76,6 +163,8 @@ export default function Register() {
                   type="email"
                   placeholder="example@email.com"
                   required
+                  name="email"
+                  onChange={handleChange}
                 />
               </div>
               <div className="w-1/3">
@@ -84,9 +173,10 @@ export default function Register() {
                 </label>
                 <select
                   className="p-1 rounded-sm text-sm border w-full text-gray-700"
-                  name="gender"
                   required
                   defaultValue=""
+                  name="gender"
+                  onChange={handleChange}
                 >
                   <option value="" disabled>
                     Select
@@ -108,6 +198,8 @@ export default function Register() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter strong password"
                 required
+                name="password"
+                onChange={handleChange}
               />
               {/* Toggle Password Visibility */}
               <svg
@@ -133,6 +225,8 @@ export default function Register() {
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Re-enter password"
                 required
+                name="confirmPassword"
+                onChange={handleChange}
               />
               {/* Toggle Confirm Password Visibility */}
               <svg
@@ -156,7 +250,8 @@ export default function Register() {
               <input
                 className="p-1 mt-2 rounded-sm text-sm border w-full text-gray-700"
                 type="file"
-                name="profilePicture"
+                name="profilePic"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
               />
             </div>
 

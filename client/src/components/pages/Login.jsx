@@ -8,14 +8,14 @@ export default function Login() {
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center bg-white">
-        <div className="md:w-1/2 px-8 md:px-16">
+        <div className="md:w-1/2 p-5 md:px-16">
           <div className="flex gap-2 justify-center items-center">
             <GraduationCap className="w-8 h-8 text-[#103D46]" />
             <span className="font-bold text-2xl text-[#103D46] text-center">
               MyCampus
             </span>
           </div>
-          <form action="" className="flex flex-col gap-2">
+          <form action="" className="flex flex-col gap-2 mt-6">
             <div className="relative w-full">
               <span className="absolute inset-y-0 left-2 top-5 flex items-center text-gray-500">
                 <Mail className="w-4 h-4 text-[#103D46]" />
@@ -82,7 +82,7 @@ export default function Login() {
           scale={1.04}
         >
           <img
-            src="./login_bg.jpg"
+            src="./image.png"
             className="rounded-2xl"
             alt="Login Background"
           />

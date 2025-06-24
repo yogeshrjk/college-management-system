@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -8,14 +8,13 @@ import {
   FileText,
   MessageCircle,
   ClipboardCheck,
-  User,
-  LogOut,
   GraduationCap,
-  Settings,
   PanelRightOpen,
   PanelRightClose,
-  Trash2,
 } from "lucide-react";
+import { ProfileDropdown } from "./ProfileDropdown";
+import { Notification } from "./Notification";
+import axios from "axios";
 
 const navigationItems = [
   {
@@ -50,72 +49,40 @@ const navigationItems = [
   },
 ];
 
-const notifications = [
-  {
-    id: 1,
-    title: "Exam Schedule Released",
-    message:
-      "The final exam timetable for Semester 5 has been published. Check the Examination section.",
-    type: "exam",
-    timestamp: "2025-06-22T09:30:00Z",
-  },
-  {
-    id: 2,
-    title: "Guest Lecture on AI",
-    message:
-      "Dr. Arvind Sharma will deliver a guest lecture on AI and Ethics on June 25th at 11 AM in Hall A.",
-    type: "event",
-    timestamp: "2025-06-21T14:15:00Z",
-  },
-  {
-    id: 3,
-    title: "Library Closed This Saturday",
-    message:
-      "Due to maintenance work, the library will remain closed on June 24th.",
-    type: "announcement",
-    timestamp: "2025-06-20T17:00:00Z",
-  },
-  {
-    id: 4,
-    title: "Assignment Submission Deadline",
-    message:
-      "Database Systems assignment must be submitted by June 26th via the LMS portal.",
-    type: "academic",
-    timestamp: "2025-06-21T10:00:00Z",
-  },
-  {
-    id: 5,
-    title: "New Course Available: Cloud Computing",
-    message:
-      "An elective on Cloud Computing is now open for registration under Semester 7 electives.",
-    type: "course",
-    timestamp: "2025-06-19T12:45:00Z",
-  },
-  {
-    id: 6,
-    title: "Workshop Registration Extended",
-    message:
-      "Deadline for Web Development workshop registration extended to June 27th.",
-    type: "event",
-    timestamp: "2025-06-22T08:20:00Z",
-  },
-  {
-    id: 7,
-    title: "Results Declared for Internal Assessment 2",
-    message:
-      "Check your performance report on the student portal under Assessments > IA2.",
-    type: "result",
-    timestamp: "2025-06-18T15:30:00Z",
-  },
-];
-
 export const DashboardLayout = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [profilePicUrl, setProfilePicUrl] = useState("");
+
+  useEffect(() => {
+    const fetchProfilePic = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/users/685ab7247ab69663853ff554`
+        );
+        const data = res.data;
+        setProfilePicUrl(data.profilePic);
+      } catch (error) {
+        console.error("Failed to load user info", error);
+      }
+    };
+    fetchProfilePic();
+  }, []);
 
   return (
-    <div className="h-screen flex bg-gray-100">
+    <div
+      className="h-screen flex bg-gray-100 select-none"
+      onClick={(e) => {
+        // Close only if the click target is outside the profile and bell icons
+        const isClickInsideIcon =
+          e.target.closest(".profile-icon") || e.target.closest(".bell-icon");
+        if (!isClickInsideIcon) {
+          setIsProfileOpen(false);
+          setIsNotificationOpen(false);
+        }
+      }}
+    >
       {/* Side panel */}
       <div
         className={`fixed top-0 left-0 h-screen bg-white shadow-md flex flex-col justify-between transition-all duration-300 z-20 ${
@@ -209,13 +176,16 @@ export const DashboardLayout = () => {
           </div>
 
           <div className="flex justify-center items-center gap-4 mr-5">
-            <Bell onClick={() => setIsNotificationOpen(!isNotificationOpen)} />
+            <Bell
+              className="bell-icon"
+              onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+            />
             <div
-              className="bg-gray-500 rounded-full cursor-pointer"
+              className="bg-gray-500 rounded-full cursor-pointer profile-icon"
               onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
               <img
-                src="https://www.perkosis.com/uploads/staffs/big/9.jpg"
+                src={profilePicUrl}
                 alt="profile"
                 className="w-8 h-8 rounded-full object-cover border border-black"
               />
@@ -223,84 +193,13 @@ export const DashboardLayout = () => {
           </div>
 
           {/* Profile section */}
-          {isProfileOpen && (
-            <div
-              className={`flex flex-col w-50 gap-1 absolute right-2 top-15 z-30 bg-white p-4 text-sm rounded-md shadow-2xl ${
-                isOpen ? "hidden" : ""
-              } md:${isOpen ? "flex" : ""} `}
-            >
-              <div className="flex flex-col p-1">
-                <span className="font-bold">John Doe</span>
-                <span className="text-xs text-gray-500">johndoe@xyz.com</span>
-              </div>
-              <hr className="border-t border-gray-200" />
-              <div className="py-1">
-                <div className="flex gap-1 items-center hover:bg-black/10 cursor-pointer p-1 rounded-sm">
-                  <User className="w-4 h-4" />
-                  <span>Profile</span>
-                </div>
-                <div className="flex gap-1 items-center hover:bg-black/10 cursor-pointer p-1 rounded-sm">
-                  <Settings className="w-4 h-4" />
-                  <span>Settings</span>
-                </div>
-              </div>
-              <hr className="border-t border-gray-200 " />
-              <div className="flex gap-1 items-center text-red-500 hover:bg-black/10 cursor-pointer p-1 rounded-sm">
-                <LogOut className="w-4 h-4" />
-                <span>Log Out</span>
-              </div>
-            </div>
-          )}
+          {isProfileOpen && <ProfileDropdown isOpen={isOpen} />}
           {/* Notifications panel */}
-          {isNotificationOpen && (
-            <div
-              className={`flex flex-col w-full h-[70%] overflow-y-scroll scrollbar-hide sm:w-100 gap-4 absolute right-0 top-15 md:right-3 z-20 bg-white p-4 text-sm rounded-md shadow-2xl ${
-                isOpen ? "hidden" : ""
-              } md:${isOpen ? "flex" : ""}`}
-            >
-              <div className="flex flex-col">
-                <span className="font-bold mb-3 text-lg">Notifications</span>
-
-                {notifications.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center gap-3 py-3 border-b border-gray-200"
-                  >
-                    {/* Left icon */}
-                    <div className="flex items-center justify-center w-6 h-6">
-                      <Bell className="w-4 h-4 text-blue-500" />
-                    </div>
-
-                    {/* Notification content */}
-                    <div className="flex flex-col flex-grow text-sm">
-                      <span className="font-medium">{item.title}</span>
-                      <span className="text-gray-600 text-xs">
-                        {item.message}
-                      </span>
-                      <span className="text-gray-400 text-xs">
-                        {new Date(item.timestamp).toLocaleString("en-GB", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </span>
-                    </div>
-
-                    {/* Right icon */}
-                    <div className="flex items-center justify-center w-6 h-6">
-                      <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700 cursor-pointer" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {isNotificationOpen && <Notification isOpen={isOpen} />}
         </div>
         {/* Main dashboard content */}
         <div className="overflow-y-auto h-screen">
-          <Outlet />{" "}
+          <Outlet />
         </div>
       </div>
     </div>
