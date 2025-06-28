@@ -68,6 +68,7 @@ cd ..
 cd server
 npm install
 node index.js
+```
 
 ⸻
 
@@ -75,30 +76,31 @@ node index.js
 
 Contributions are welcome! If you have suggestions for improvements or want to add new features, feel free to fork the repository and submit a pull request.
 
-Steps to Contribute:
-	1.	Fork the repository
-	2.	Clone your forked repo
+Steps to Contribute: 1. Fork the repository 2. Clone your forked repo
 
+```bash
 git clone https://github.com/your-username/college-management-system.git
+```
 
+    3.	Create a new branch
 
-	3.	Create a new branch
-
+````bash
 git checkout -b feature/your-feature-name
 
 
 	4.	Make your changes
 	5.	Commit your changes
-
+```bash
 git commit -m "Add: your message here"
+````
 
+    6.	Push to your branch
 
-	6.	Push to your branch
-
+```bash
 git push origin feature/your-feature-name
+```
 
-
-	7.	Create a Pull Request on GitHub
+    7.	Create a Pull Request on GitHub
 
 Make sure your code follows the project’s structure and includes relevant comments and documentation.
 
@@ -112,4 +114,3 @@ Yogesh Rajak
 Frontend Developer | React.js Enthusiast
 📧 yogeshrjk4@gmail.com
 🌐 [Portfolio](https://yogeshrjk4.github.io)
-```
