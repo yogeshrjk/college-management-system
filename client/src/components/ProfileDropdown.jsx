@@ -1,37 +1,33 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { gql, useQuery } from "@apollo/client";
 import { User, LogOut, Settings } from "lucide-react";
 
 export const ProfileDropdown = ({ isOpen }) => {
-  const [userInfo, setUserInfo] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-  });
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/users/685ab7247ab69663853ff554`
-        );
-
-        const data = res.data;
-        setUserInfo({
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-        });
-      } catch (error) {
-        console.error("Failed to load user info", error);
+  const GET_USER = gql`
+    query GetUser($id: ID!) {
+      getUser(id: $id) {
+        firstName
+        lastName
+        email
       }
-    };
-    fetchUserInfo();
-  }, []);
+    }
+  `;
+
+  const { data, loading, error } = useQuery(GET_USER, {
+    variables: { id: "685ffd0c61213c8e0c5068d7" },
+  });
+
+  if (loading) return null;
+  if (error) {
+    console.error("Failed to load user info", error);
+    return null;
+  }
+
+  const userInfo = data?.getUser;
 
   return (
     <div
       className={`flex flex-col w-50 gap-1 absolute right-2 top-15 z-30 bg-white p-4 text-sm rounded-md shadow-2xl ${
-        isOpen ? "hidden" : ""
+        isOpen ? "" : ""
       } md:${isOpen ? "flex" : ""} `}
     >
       <div className="flex flex-col p-1">

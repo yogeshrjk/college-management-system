@@ -16,24 +16,17 @@ router.post("/signup", upload.single("profilePic"), async (req, res) => {
   }
 });
 
-// Profile Picture Upload
-router.post("/upload-profile", upload.single("profilePic"), (req, res) => {
-  res.json({
-    message: "Upload successful",
-    imageUrl: req.file.path, // Cloudinary URL
-  });
-});
-
-router.get("/:id", async (req, res) => {
-  try {
-    const foundUser = await user.findById(req.params.id);
-    if (!foundUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.json(foundUser);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// get data
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const foundUser = await user.findById(req.params.id);
+//     if (!foundUser) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     res.json(foundUser);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 module.exports = router;

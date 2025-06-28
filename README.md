@@ -17,19 +17,25 @@ MyCampus is a full-stack college management system built with modern web technol
 Frontend
 • React.js
 • Tailwind CSS
-• Lucide React Icons
-• React Router DOM (if routing is used)
+• React Router
+• axios
+• lucide-react
+• react-parallax-tilt
 
-Backend (if applicable)
+Backend
 • Node.js
 • Express.js
 • MongoDB (Mongoose)
+• bycrypt
+• multer
+• cloudinary
+• cors
 
 ⸻
 
 📷 Screenshots
 
-Add images here if you want: Sign-up page, dashboard, etc.
+will be added soon
 
 ⸻
 
@@ -37,31 +43,21 @@ Add images here if you want: Sign-up page, dashboard, etc.
 
 Prerequisites
 • Node.js
-• npm / yarn
+• npm
 
 Installation
 
-git clone https://github.com/your-username/college-management-system.git
+git clone https://github.com/yogeshrjk/college-management-system.git
 cd college-management-system
+cd client
 npm install
 npm run dev
+cd ..
+cd server
+npm install
+node index.js
 
-For backend setup (if applicable), go to the /server folder and follow similar steps.
-
-⸻
-
-📂 Folder Structure (Client)
-
-client/
-├── public/
-├── src/
-│ ├── assets/
-│ ├── components/
-│ │ └── pages/
-│ │ └── SignUp.jsx
-│ ├── App.jsx
-│ └── main.jsx
-
+create .env and add path of your server
 ⸻
 
 🙋‍♂️ Author

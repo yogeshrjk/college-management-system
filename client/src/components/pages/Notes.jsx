@@ -1,5 +1,7 @@
 import { BookOpen, FileText, User, Download, Search } from "lucide-react";
+import { useState } from "react";
 import Tilt from "react-parallax-tilt";
+import { UploadNotes } from "../UploadNotes";
 const notes = [
   {
     id: 1,
@@ -81,8 +83,9 @@ const notes = [
   },
 ];
 export const Notes = () => {
+  const [showNotesForm, setShowNotesForm] = useState(false);
   return (
-    <div className="px-10 py-5 flex flex-col gap-5 select-none">
+    <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none">
       <div className="flex flex-col gap-2 md:flex-row justify-between items-start md:items-center p-1">
         <div className="flex flex-col">
           <span className="fluid-h1">Notes</span>
@@ -90,10 +93,16 @@ export const Notes = () => {
             Access study materials and lecture notes from all subjects
           </span>
         </div>
-        <div className="bg-black items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900">
+        <div
+          className="bg-black items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+          onClick={() => setShowNotesForm(true)}
+        >
           <BookOpen className="text-white w-4 h-4" />
           <span className="text-white text-sm">Upload Notes</span>
         </div>
+      </div>
+      <div className={`${showNotesForm ? "block" : "hidden"}`}>
+        <UploadNotes setShowNotesForm={setShowNotesForm} />
       </div>
       {/* Search bar */}
       <div className="relative w-full">

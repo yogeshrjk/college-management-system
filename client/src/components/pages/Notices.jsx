@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { ClipboardCheck, CalendarDays, Pin } from "lucide-react";
 import Tilt from "react-parallax-tilt";
+import { CreateNotice } from "../CreateNotice";
 const notices = [
   {
     id: 1,
@@ -59,8 +61,9 @@ const notices = [
 ];
 
 export const Notices = () => {
+  const [showNoticeForm, setShowNoticeForm] = useState(false);
   return (
-    <div className="px-10 py-5 flex flex-col gap-5 select-none">
+    <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none">
       <div className="flex flex-col gap-2 md:flex-row justify-between items-start md:items-center p-1">
         <div className="flex flex-col">
           <span className="fluid-h1">Notices</span>
@@ -68,12 +71,17 @@ export const Notices = () => {
             Important announcements and updates from the college administration
           </span>
         </div>
-        <div className="bg-black items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900">
+        <div
+          className="bg-black items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+          onClick={() => setShowNoticeForm(true)}
+        >
           <ClipboardCheck className="text-white w-4 h-4" />
           <span className="text-white text-sm">Create Notice</span>
         </div>
       </div>
-
+      <div className={`${showNoticeForm ? "block" : "hidden"}`}>
+        <CreateNotice setShowNoticeForm={setShowNoticeForm} />
+      </div>
       {/* Notice Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {notices.map((item) => (

@@ -8,8 +8,23 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Tilt from "react-parallax-tilt";
-
+import { gql, useQuery } from "@apollo/client";
 export const Dashboard = () => {
+  const GET_ACTIVITIES = gql`
+    query GetActivities {
+      getActivities {
+        _id
+        message
+        type
+        createdAt
+        time
+        date
+      }
+    }
+  `;
+  const { data, loading, error } = useQuery(GET_ACTIVITIES);
+  const recentActivities = data?.getActivities || [];
+
   const stats = [
     {
       title: "Attendance",
@@ -41,16 +56,6 @@ export const Dashboard = () => {
     },
   ];
 
-  const recentActivities = [
-    { title: "New student registration", time: "2 minutes ago", type: "user" },
-    {
-      title: "Assignment submitted",
-      time: "15 minutes ago",
-      type: "assignment",
-    },
-    { title: "Event reminder sent", time: "1 hour ago", type: "event" },
-    { title: "Notice published", time: "3 hours ago", type: "notice" },
-  ];
   return (
     <div className="px-10 py-5 flex flex-col gap-5 select-none">
       <div className="flex flex-col p-1">
@@ -89,17 +94,16 @@ export const Dashboard = () => {
               Latest updates from your college management system
             </p>
           </div>
-          {recentActivities.map((activity, index) => (
-            <div
-              key={`${activity.title}-${index}`}
-              className="flex flex-row gap-4 p-2"
-            >
+          {recentActivities.map((activity) => (
+            <div key={activity._id} className="flex flex-row gap-4 p-2">
               <div className="flex justify-center items-center bg-black/5 w-6 my-auto rounded-full">
                 <Clock className="w-4" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm">{activity.title}</span>
-                <span className="fluid-p text-gray-500">{activity.time}</span>
+                <span className="text-sm">{activity.message}</span>
+                <span className="fluid-p text-gray-500">
+                  {activity.date} at {activity.time}
+                </span>
               </div>
             </div>
           ))}

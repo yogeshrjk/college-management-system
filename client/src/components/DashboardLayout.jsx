@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { gql, useQuery } from "@apollo/client";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -14,7 +15,6 @@ import {
 } from "lucide-react";
 import { ProfileDropdown } from "./ProfileDropdown";
 import { Notification } from "./Notification";
-import axios from "axios";
 
 const navigationItems = [
   {
@@ -55,20 +55,28 @@ export const DashboardLayout = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState("");
 
-  useEffect(() => {
-    const fetchProfilePic = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/users/685ab7247ab69663853ff554`
-        );
-        const data = res.data;
-        setProfilePicUrl(data.profilePic);
-      } catch (error) {
-        console.error("Failed to load user info", error);
+  const GET_USER = gql`
+    query GetUser($id: ID!) {
+      getUser(id: $id) {
+        profilePic
       }
-    };
-    fetchProfilePic();
-  }, []);
+    }
+  `;
+  const { data, loading, error } = useQuery(GET_USER, {
+    variables: { id: "685ffd0c61213c8e0c5068d7" },
+  });
+
+  useEffect(() => {
+    if (data?.getUser?.profilePic) {
+      setProfilePicUrl(data.getUser.profilePic);
+    }
+  }, [data]);
+
+  if (loading) return null;
+  if (error) {
+    console.error("Failed to load user info", error);
+    return null;
+  }
 
   return (
     <div
@@ -182,10 +190,16 @@ export const DashboardLayout = () => {
             />
             <div
               className="bg-gray-500 rounded-full cursor-pointer profile-icon"
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsProfileOpen(!isProfileOpen);
+              }}
             >
               <img
-                src={profilePicUrl}
+                src={
+                  profilePicUrl ||
+                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                }
                 alt="profile"
                 className="w-8 h-8 rounded-full object-cover border border-black"
               />
