@@ -25,9 +25,9 @@
   "author": "Yogesh Rajak",
   "type": "commonjs",
   "main": "index.js",
-  "build": "npm run build",
   "scripts": {
-    "start": "node index"
+    "start": "node index",
+    "build": "npm run build"
   },
   "dependencies": {
     "@apollo/server": "^4.12.2",
