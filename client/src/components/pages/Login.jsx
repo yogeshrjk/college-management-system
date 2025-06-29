@@ -61,10 +61,12 @@ export default function Login() {
                 )}
               </svg>
             </div>
-
-            <button className="p-1 mt-2 rounded-md border border-none text-sm text-[#ffffff] bg-[#103D46] hover:scale-105 duration-300">
-              Login
-            </button>
+            <Link
+              to="/dashboard"
+              className="p-1 mt-2 rounded-md border border-none text-sm text-[#ffffff] text-center bg-[#103D46] hover:scale-105 duration-300"
+            >
+              <button>Login</button>
+            </Link>
           </form>
 
           <div className="mt-4 grid grid-cols-3 items-center text-gray-400">
@@ -81,9 +83,12 @@ export default function Login() {
 
           <div className="mt-3 text-xs flex justify-between items-center text-[#103D46]">
             <p>Don't have an account?</p>
-            <button className="py-1 px-4 bg-black/10 border text-xs border-[#103D46] ml-2 rounded-md hover:scale-110">
-              <Link to="/signup">SignUp</Link>
-            </button>
+            <Link
+              to="/signup"
+              className="py-1 px-4 bg-black/10 border text-xs text-center border-[#103D46] ml-2 rounded-md hover:scale-110"
+            >
+              <button>SignUp</button>
+            </Link>
           </div>
         </div>
 

@@ -306,9 +306,12 @@ export default function Register() {
             {/* Login button */}
             <div className="mt-3 text-xs flex justify-between items-center text-[#103D46]">
               <p className="text-sm">Already have an account?</p>
-              <button className="py-1 px-5 bg-black/10 border rounded-md hover:scale-110 ">
-                <Link to="/">Login</Link>
-              </button>
+              <Link
+                to="/"
+                className="py-1 px-5 bg-black/10 text-center border rounded-md hover:scale-110 "
+              >
+                <button>Login</button>
+              </Link>
             </div>
           </div>
         </div>

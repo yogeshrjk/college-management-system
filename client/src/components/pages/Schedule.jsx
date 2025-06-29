@@ -1,34 +1,32 @@
 import React, { useState } from "react";
-
+import { Sheet } from "lucide-react";
 export function Schedule() {
   const scheduleData = {
     CSE: {
       "Semester 3": {
         subjects: [
-          { name: "Data Structures", code: "CS301", faculty: "Dr. Smith" },
+          { name: "Data Structures", faculty: "Dr. Smith" },
           {
             name: "Operating Systems",
-            code: "CS302",
             faculty: "Prof. Johnson",
           },
-          { name: "Database Systems", code: "CS303", faculty: "Dr. Williams" },
-          { name: "Computer Networks", code: "CS304", faculty: "Prof. Brown" },
-          { name: "Algorithm Analysis", code: "CS305", faculty: "Dr. Davis" },
+          { name: "Database Systems", faculty: "Dr. Williams" },
+          { name: "Computer Networks", faculty: "Prof. Brown" },
+          { name: "Algorithm Analysis", faculty: "Dr. Davis" },
         ],
         lab: "Operating Systems Lab",
         activity: "Programming Club",
       },
       "Semester 5": {
         subjects: [
-          { name: "Machine Learning", code: "CS501", faculty: "Dr. Anderson" },
-          { name: "Cloud Computing", code: "CS502", faculty: "Prof. Martinez" },
-          { name: "Cyber Security", code: "CS503", faculty: "Dr. Garcia" },
+          { name: "Machine Learning", faculty: "Dr. Anderson" },
+          { name: "Cloud Computing", faculty: "Prof. Martinez" },
+          { name: "Cyber Security", faculty: "Dr. Garcia" },
           {
             name: "Big Data Analytics",
-            code: "CS504",
             faculty: "Prof. Rodriguez",
           },
-          { name: "IoT Fundamentals", code: "CS505", faculty: "Dr. Wilson" },
+          { name: "IoT Fundamentals", faculty: "Dr. Wilson" },
         ],
         lab: "Machine Learning Lab",
         activity: "Research Seminar",
@@ -39,31 +37,25 @@ export function Schedule() {
         subjects: [
           {
             name: "Digital Electronics",
-            code: "EC301",
             faculty: "Dr. Thompson",
           },
-          { name: "Signals & Systems", code: "EC302", faculty: "Prof. Clark" },
-          { name: "Circuit Theory", code: "EC303", faculty: "Dr. Lewis" },
-          { name: "EM Theory", code: "EC304", faculty: "Prof. Lee" },
-          { name: "Microprocessors", code: "EC305", faculty: "Dr. Walker" },
+          { name: "Signals & Systems", faculty: "Prof. Clark" },
+          { name: "Circuit Theory", faculty: "Dr. Lewis" },
+          { name: "EM Theory", faculty: "Prof. Lee" },
+          { name: "Microprocessors", faculty: "Dr. Walker" },
         ],
-        lab: "Digital Electronics Lab",
-        activity: "Robotics Club",
       },
       "Semester 5": {
         subjects: [
-          { name: "VLSI Design", code: "EC501", faculty: "Dr. Hall" },
+          { name: "VLSI Design", faculty: "Dr. Hall" },
           {
             name: "Communication Systems",
-            code: "EC502",
             faculty: "Prof. Allen",
           },
-          { name: "Embedded Systems", code: "EC503", faculty: "Dr. Young" },
-          { name: "Wireless Comm", code: "EC504", faculty: "Prof. King" },
-          { name: "Control Systems", code: "EC505", faculty: "Dr. Wright" },
+          { name: "Embedded Systems", faculty: "Dr. Young" },
+          { name: "Wireless Comm", faculty: "Prof. King" },
+          { name: "Control Systems", faculty: "Dr. Wright" },
         ],
-        lab: "Embedded Systems Lab",
-        activity: "IEEE Seminar",
       },
     },
   };
@@ -71,58 +63,72 @@ export function Schedule() {
   const [selectedClass, setSelectedClass] = useState("CSE");
   const [selectedSemester, setSelectedSemester] = useState("Semester 3");
 
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
   const timeSlots = [
-    { time: "10:00 - 10:50", type: "lecture", period: 1 },
-    { time: "10:50 - 11:40", type: "lecture", period: 2 },
-    { time: "11:40 - 11:50", type: "short break", period: null },
-    { time: "11:50 - 12:40", type: "lecture", period: 3 },
-    { time: "12:40 - 01:30", type: "lecture", period: 4 },
-    { time: "01:30 - 02:15", type: "lunch break", period: null },
-    { time: "02:15 - 03:05", type: "lecture", period: 5 },
-    { time: "03:05 - 03:55", type: "lab", period: null },
-    { time: "03:55 - 04:00", type: "extra", period: null },
+    "10:00 - 10:50",
+    "10:50 - 11:40",
+    "11:40 - 12:30",
+    "12:30 - 01:40",
+    "01:40 - 02:30",
+    "02:30 - 04:20",
   ];
 
   const currentSchedule = scheduleData[selectedClass][selectedSemester];
 
   return (
-    <div className="w-full mx-auto p-6 md:p-10">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        College Schedule
-      </h1>
-
+    <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none">
+      <div className="flex flex-col gap-2 md:flex-row justify-between items-start md:items-center p-1">
+        <div className="flex flex-col">
+          <span className="fluid-h1">Class Schedule</span>
+          <span className="fluid-p text-gray-500">
+            Important announcements and updates from the college administration
+          </span>
+        </div>
+        <div
+          className="bg-black items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+          onClick={() => setShowNoticeForm(true)}
+        >
+          <Sheet className="text-white w-4 h-4" />
+          <span className="text-white text-sm">Create Schedule</span>
+        </div>
+      </div>
       {/* Dropdowns */}
-      <div className="flex space-x-4 mb-6">
-        <div className="w-1/2">
-          <label
-            htmlFor="class-select"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Select Class
+      <div className="flex flex-col sm:flex-row justify-between md:justify-end">
+        <div className=" p-1">
+          <label htmlFor="class-select" className="text-sm font-bold p-1 mb-1">
+            Select Class:
           </label>
           <select
             id="class-select"
             value={selectedClass}
             onChange={(e) => setSelectedClass(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 bg-white"
+            className="px-5 py-1 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 bg-white"
           >
             <option value="CSE">Computer Science</option>
             <option value="ECE">Electronics</option>
           </select>
         </div>
 
-        <div className="w-1/2">
+        <div className=" p-1">
           <label
             htmlFor="semester-select"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="text-sm font-bold p-1 mb-1"
           >
-            Select Semester
+            Select Semester:
           </label>
           <select
             id="semester-select"
             value={selectedSemester}
             onChange={(e) => setSelectedSemester(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 bg-white"
+            className="px-5 py-1 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 bg-white"
           >
             <option value="Semester 3">Semester 3</option>
             <option value="Semester 5">Semester 5</option>
@@ -131,69 +137,65 @@ export function Schedule() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse bg-white border border-gray-300 shadow-md">
+      <div className="overflow-x-auto w-full">
+        <table className="min-w-full table-auto bg-white shadow-lg border border-gray-300 text-sm">
           <thead>
-            <tr className="bg-white">
-              <th className="py-2 px-4 border text-left text-gray-700">Time</th>
-              <th className="py-2 px-4 border text-left text-gray-700">
-                Activity
+            <tr>
+              <th className="py-2 px-4 border border-gray-300 text-left">
+                Day / Time
               </th>
-              <th className="py-2 px-4 border text-left text-gray-700">
-                Subject/Faculty
-              </th>
+              {timeSlots.map((time, idx) => (
+                <th
+                  key={idx}
+                  className="py-2 px-4 border border-gray-300 text-left"
+                >
+                  {time}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {timeSlots.map((slot, index) => {
-              let content;
-              switch (slot.type) {
-                case "lecture":
-                  const subject = currentSchedule.subjects[slot.period - 1];
-                  content = (
-                    <>
-                      <div className="font-medium">{subject.name}</div>
-                      <div className="text-sm text-gray-600">
-                        {subject.code}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {subject.faculty}
-                      </div>
-                    </>
-                  );
-                  break;
-                case "lab":
-                  content = (
-                    <div className="font-medium">{currentSchedule.lab}</div>
-                  );
-                  break;
-                case "extra":
-                  content = (
-                    <>
-                      <div className="font-medium">Extra Activity</div>
-                      <div className="text-sm text-gray-600">
-                        {currentSchedule.activity}
-                      </div>
-                    </>
-                  );
-                  break;
-                default:
-                  content = (
-                    <div className="italic text-gray-500">
-                      {slot.type.charAt(0).toUpperCase() + slot.type.slice(1)}
-                    </div>
-                  );
-              }
-
+            {days.map((day, dayIdx) => {
+              let subjectIndex = 0;
               return (
-                <tr key={index} className="bg-white">
-                  <td className="py-3 px-4 border text-gray-700">
-                    {slot.time}
+                <tr key={dayIdx} className="bg-white border border-gray-300">
+                  <td className="py-3 px-4 border border-gray-300 font-medium">
+                    {day}
                   </td>
-                  <td className="py-3 px-4 border capitalize">
-                    {slot.type.replace("-", " ")}
-                  </td>
-                  <td className="py-3 px-4 border">{content}</td>
+                  {timeSlots.map((time, timeIdx) => {
+                    if (time === "12:30 - 01:40") {
+                      if (dayIdx === 0) {
+                        return (
+                          <td
+                            rowSpan={days.length}
+                            key={timeIdx}
+                            className="py-3 px-4 text-center font-bold text-gray-500 border border-gray-300"
+                          >
+                            Recess
+                          </td>
+                        );
+                      }
+                      return null;
+                    }
+                    const subject = currentSchedule.subjects[subjectIndex++];
+                    return (
+                      <td
+                        key={timeIdx}
+                        className="py-3 px-4 border border-gray-300"
+                      >
+                        {subject ? (
+                          <>
+                            <div className="font-semibold">{subject.name}</div>
+                            <div className="text-xs text-gray-500">
+                              {subject.faculty}
+                            </div>
+                          </>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })}
