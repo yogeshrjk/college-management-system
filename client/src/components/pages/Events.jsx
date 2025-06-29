@@ -51,59 +51,60 @@ export const Events = () => {
       </div>
       {/* Event Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {[...events]?.reverse().map((item) => (
-          <Tilt
-            key={item.title}
-            className="bg-white shadow-md border border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10"
-            perspective={1000}
-            tiltMaxAngleX={5}
-            tiltMaxAngleY={5}
-            glarePosition={"all"}
-            glareEnable={true}
-            glareMaxOpacity={0.2}
-            scale={1.04}
-            glareColor={"#000000"}
-          >
-            <span className="fluid-h2">{item.title}</span>
+        {Array.isArray(events) &&
+          [...events].reverse().map((item) => (
+            <Tilt
+              key={item.title}
+              className="bg-white shadow-md border border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10"
+              perspective={1000}
+              tiltMaxAngleX={5}
+              tiltMaxAngleY={5}
+              glarePosition={"all"}
+              glareEnable={true}
+              glareMaxOpacity={0.2}
+              scale={1.04}
+              glareColor={"#000000"}
+            >
+              <span className="fluid-h2">{item.title}</span>
 
-            <div className="flex gap-3 text-xs">
-              <span
-                className={`px-2 py-0.5 rounded-lg ${
-                  item.status === "completed"
-                    ? "bg-green-200"
-                    : item.status === "ongoing"
-                    ? "bg-yellow-200"
-                    : item.status === "cancelled"
-                    ? "bg-red-200"
-                    : "bg-orange-200"
-                }`}
-              >
-                {item.status}
-              </span>
-              <span className="bg-blue-200 px-2 py-0.5 rounded-lg">
-                {item.category}
-              </span>
-            </div>
-            <p className="fluid-p text-gray-500">{item.description}</p>
-            <div className="space-y-3 px-1 text-sm text-gray-500 mt-3">
-              <div className="flex gap-2 items-center">
-                <CalendarDays className="w-4 h-4" /> {item.date}
+              <div className="flex gap-3 text-xs">
+                <span
+                  className={`px-2 py-0.5 rounded-lg ${
+                    item.status === "completed"
+                      ? "bg-green-200"
+                      : item.status === "ongoing"
+                      ? "bg-yellow-200"
+                      : item.status === "cancelled"
+                      ? "bg-red-200"
+                      : "bg-orange-200"
+                  }`}
+                >
+                  {item.status}
+                </span>
+                <span className="bg-blue-200 px-2 py-0.5 rounded-lg">
+                  {item.category}
+                </span>
               </div>
-              <div className="flex gap-2 items-center">
-                <Clock className="w-4 h-4" /> {item.time}
+              <p className="fluid-p text-gray-500">{item.description}</p>
+              <div className="space-y-3 px-1 text-sm text-gray-500 mt-3">
+                <div className="flex gap-2 items-center">
+                  <CalendarDays className="w-4 h-4" /> {item.date}
+                </div>
+                <div className="flex gap-2 items-center">
+                  <Clock className="w-4 h-4" /> {item.time}
+                </div>
+                <div className="flex gap-2 items-center">
+                  <MapPin className="w-4 h-4" /> {item.location}
+                </div>
+                <div className="flex gap-2 items-center">
+                  <Users className="w-4 h-4" /> {item.attendees}
+                </div>
               </div>
-              <div className="flex gap-2 items-center">
-                <MapPin className="w-4 h-4" /> {item.location}
-              </div>
-              <div className="flex gap-2 items-center">
-                <Users className="w-4 h-4" /> {item.attendees}
-              </div>
-            </div>
-            <button className="text-sm py-2 font-bold bg-black/10 p-1 rounded-md hover:bg-black/20 cursor-pointer">
-              View Details
-            </button>
-          </Tilt>
-        ))}
+              <button className="text-sm py-2 font-bold bg-black/10 p-1 rounded-md hover:bg-black/20 cursor-pointer">
+                View Details
+              </button>
+            </Tilt>
+          ))}
       </div>
     </div>
   );

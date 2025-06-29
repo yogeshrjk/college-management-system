@@ -63,7 +63,7 @@ export const DashboardLayout = () => {
     }
   `;
   const { data, loading, error } = useQuery(GET_USER, {
-    variables: { id: "685ffd0c61213c8e0c5068d7" },
+    variables: { id: "685ab7247ab69663853ff554" },
   });
 
   useEffect(() => {

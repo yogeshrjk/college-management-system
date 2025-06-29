@@ -2,7 +2,7 @@
 
 **MyCampus** is a full-stack college management system designed to streamline student registration, authentication, and profile management. Built with modern web technologies, it offers a responsive, user-friendly interface to simplify academic operations.
 
-![MyCampus Demo](https://via.placeholder.com/800x400.png?text=MyCampus+Demo) <!-- Replace with actual screenshot or GIF -->
+![MyCampus Demo](https://drive.google.com/file/d/1QT786_zgEKmeY_uVzYG86WWcPN8UZRKh/view?usp=sharing)
 
 [![GitHub stars](https://img.shields.io/github/stars/yogeshrjk/college-management-system)](https://github.com/yogeshrjk/college-management-system/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/yogeshrjk/college-management-system)](https://github.com/yogeshrjk/college-management-system/issues)
@@ -44,9 +44,9 @@
 
 ## 📷 Screenshots
 
-| Homepage                                                           | Student Dashboard                                                    |
-| ------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| ![Homepage](https://via.placeholder.com/400x200.png?text=Homepage) | ![Dashboard](https://via.placeholder.com/400x200.png?text=Dashboard) |
+| Homepage                                                                                    | Student Dashboard                                                                                |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| ![Page](https://drive.google.com/file/d/1vTzjweUFEbcxaiSWrUisE6b2sZ-WAqSd/view?usp=sharing) | ![Dashboard](https://drive.google.com/file/d/1vd3Z02mJBjnLuhbXytwCIRqnF1IH5mNn/view?usp=sharing) |
 
 _Add screenshots or GIFs showcasing key features to the `assets/` folder and update links._
 
