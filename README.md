@@ -48,8 +48,6 @@
 | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | ![Page](https://res.cloudinary.com/dhwpprvsb/image/upload/v1751170569/Screenshot_2025-06-29_at_9.22.28_AM_dntgfo.png) | ![Dashboard](https://res.cloudinary.com/dhwpprvsb/image/upload/v1751170569/Screenshot_2025-06-29_at_9.22.35_AM_ug5z5x.png) |
 
-_Add screenshots or GIFs showcasing key features to the `assets/` folder and update links._
-
 ---
 
 ## 🧑‍💻 Getting Started
@@ -132,7 +130,7 @@ Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines and check open
 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [Apache Licens 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ---
 
