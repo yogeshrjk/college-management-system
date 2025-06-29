@@ -2,7 +2,7 @@
 
 **MyCampus** is a full-stack college management system designed to streamline student registration, authentication, and profile management. Built with modern web technologies, it offers a responsive, user-friendly interface to simplify academic operations.
 
-![MyCampus Demo](https://drive.google.com/file/d/1QT786_zgEKmeY_uVzYG86WWcPN8UZRKh/view?usp=sharing)
+![MyCampus Demo](https://res.cloudinary.com/dhwpprvsb/image/upload/v1751170569/Screenshot_2025-06-29_at_9.21.32_AM_pkuglf.png)
 
 [![GitHub stars](https://img.shields.io/github/stars/yogeshrjk/college-management-system)](https://github.com/yogeshrjk/college-management-system/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/yogeshrjk/college-management-system)](https://github.com/yogeshrjk/college-management-system/issues)
@@ -44,9 +44,9 @@
 
 ## 📷 Screenshots
 
-| Homepage                                                                                    | Student Dashboard                                                                                |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| ![Page](https://drive.google.com/file/d/1vTzjweUFEbcxaiSWrUisE6b2sZ-WAqSd/view?usp=sharing) | ![Dashboard](https://drive.google.com/file/d/1vd3Z02mJBjnLuhbXytwCIRqnF1IH5mNn/view?usp=sharing) |
+| Homepage                                                                                                              | Student Dashboard                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| ![Page](https://res.cloudinary.com/dhwpprvsb/image/upload/v1751170569/Screenshot_2025-06-29_at_9.22.28_AM_dntgfo.png) | ![Dashboard](https://res.cloudinary.com/dhwpprvsb/image/upload/v1751170569/Screenshot_2025-06-29_at_9.22.35_AM_ug5z5x.png) |
 
 _Add screenshots or GIFs showcasing key features to the `assets/` folder and update links._
 
