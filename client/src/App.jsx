@@ -5,6 +5,7 @@ import { Events } from "./components/pages/Events";
 import { Notices } from "./components/pages/Notices";
 import { Notes } from "./components/pages/Notes";
 import { Paper } from "./components/pages/Paper";
+import { Schedule } from "./components/pages/Schedule";
 import "./app.css";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/SignUp";
@@ -20,6 +21,7 @@ function App() {
           <Route path="notices" element={<Notices />} />
           <Route path="notes" element={<Notes />} />
           <Route path="papers" element={<Paper />} />
+          <Route path="schedule" element={<Schedule />} />
         </Route>
       </Routes>
     </BrowserRouter>

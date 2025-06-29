@@ -13,6 +13,7 @@ import {
   GraduationCap,
   PanelRightOpen,
   PanelRightClose,
+  Sheet,
 } from "lucide-react";
 import { ProfileDropdown } from "./ProfileDropdown";
 import { Notification } from "./Notification";
@@ -47,6 +48,11 @@ const navigationItems = [
     title: "Chat",
     url: "/chat",
     icon: MessageCircle,
+  },
+  {
+    title: "Schedule",
+    url: "/schedule",
+    icon: Sheet,
   },
 ];
 
