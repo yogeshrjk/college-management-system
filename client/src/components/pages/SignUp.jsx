@@ -1,11 +1,42 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { showAlert } from "../../utils/showAlert";
+import { gql, useMutation } from "@apollo/client";
+import { Link } from "react-router-dom";
 import { GraduationCap } from "lucide-react";
 import Tilt from "react-parallax-tilt";
+
+const SIGNUP_MUTATION = gql`
+  mutation Signup(
+    $firstName: String!
+    $lastName: String!
+    $phoneNumber: String!
+    $dob: String!
+    $email: String!
+    $gender: String!
+    $password: String!
+    $profilePic: Upload
+  ) {
+    signup(
+      firstName: $firstName
+      lastName: $lastName
+      phoneNumber: $phoneNumber
+      dob: $dob
+      email: $email
+      gender: $gender
+      password: $password
+      profilePic: $profilePic
+    ) {
+      _id
+      token
+      email
+      firstName
+    }
+  }
+`;
+
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [alert, setAlert] = useState({ type: "", message: "" });
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -19,75 +50,40 @@ export default function Register() {
     confirmPassword: "",
     profilePic: "",
   });
-  //logic to hide alert msg
-  useEffect(() => {
-    if (alert.message) {
-      const timer = setTimeout(() => {
-        setAlert({ type: "", message: "" });
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [alert]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const [signup] = useMutation(SIGNUP_MUTATION);
+
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) return;
     try {
-      //check password and confirm password are matched or not
-      if (formData.password !== formData.confirmPassword) {
-        setAlert({
-          type: "error",
-          message: "Please make sure both passwords match.",
-        });
-        return;
-      }
-      const data = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key !== "confirmPassword") {
-          data.append(key, value);
-        }
+      await signup({
+        variables: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phoneNumber: formData.phoneNumber,
+          dob: formData.dob,
+          email: formData.email,
+          gender: formData.gender,
+          password: formData.password,
+          profilePic: selectedFile,
+        },
       });
-      //upload profile pic
-      if (selectedFile) {
-        data.append("profilePic", selectedFile);
-      }
-      // Send form data to backend API for user registration
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/users/signup`,
-        data,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      console.log(res.data);
-      setAlert({ type: "success", message: "Signup successful!" });
+      showAlert("User SignedUp successfully!", "success");
     } catch (err) {
-      setAlert({
-        type: "error",
-        message: err.response?.data || "Signup failed. Try again.",
-      });
-      console.error("Signup error:", err.response?.data || err.message);
+      showAlert(`${err}`, "error");
+      console.error("Signup error:", err.message);
     }
   };
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100">
-      {alert.message && (
-        <div
-          className={`absolute top-5 p-2 px-10 mb-4 text-sm font-medium text-center rounded ${
-            alert.type === "success"
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
-        >
-          {alert.message}
-        </div>
-      )}
       <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center bg-white">
         <Tilt
           className="md:block hidden w-1/2"
@@ -311,7 +307,7 @@ export default function Register() {
             <div className="mt-3 text-xs flex justify-between items-center text-[#103D46]">
               <p className="text-sm">Already have an account?</p>
               <button className="py-1 px-5 bg-black/10 border rounded-md hover:scale-110 ">
-                <a href="/">Login</a>
+                <Link to="/">Login</Link>
               </button>
             </div>
           </div>

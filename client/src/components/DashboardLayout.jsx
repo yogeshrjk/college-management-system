@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
@@ -126,8 +127,8 @@ export const DashboardLayout = () => {
         </div>
         <nav className="flex-1 p-4 space-y-2">
           {navigationItems.map((item) => (
-            <a
-              href={item.url}
+            <Link
+              to={item.url}
               key={item.title}
               className={`flex ${
                 isOpen ? "flex-row" : "flex-col"
@@ -137,7 +138,7 @@ export const DashboardLayout = () => {
               {isOpen && (
                 <span className="text-sm text-center">{item.title}</span>
               )}
-            </a>
+            </Link>
           ))}
         </nav>
         {!isOpen ? (

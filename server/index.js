@@ -1,6 +1,8 @@
 const express = require("express");
+require("dotenv").config();
 const { ApolloServer } = require("@apollo/server");
 const { expressMiddleware } = require("@apollo/server/express4");
+const { graphqlUploadExpress } = require("graphql-upload");
 const { mergeTypeDefs, mergeResolvers } = require("@graphql-tools/merge");
 const { connectMongoDb } = require("./config/db-connect");
 
@@ -13,7 +15,6 @@ const eventResolvers = require("./graphql/event-resolvers");
 const activityTypeDefs = require("./graphql/activity-schema");
 const activityResolvers = require("./graphql/activity-resolvers");
 
-const userRoutes = require("./routes/user-route");
 const cors = require("cors");
 require("dotenv").config();
 const PORT = process.env.PORT || 8000;
@@ -33,6 +34,11 @@ const app = express();
     const apolloServer = new ApolloServer({
       typeDefs,
       resolvers,
+      csrfPrevention: false,
+      formatError: (err) => {
+        console.error("GraphQL error:", err);
+        return err;
+      },
     });
 
     await apolloServer.start();
@@ -40,11 +46,18 @@ const app = express();
     // Middleware
     app.use(cors());
     app.use(express.json());
+    app.use(graphqlUploadExpress());
 
     // Add Apollo middleware after other middleware
-    app.use("/api/users", userRoutes);
-
-    app.use("/graphql", expressMiddleware(apolloServer));
+    app.use(
+      "/graphql",
+      expressMiddleware(apolloServer, {
+        context: async ({ req }) => {
+          // Optional JWT decoding here
+          return {};
+        },
+      })
+    );
 
     // Connect to MongoDB
     await connectMongoDb(process.env.MONGO_URI);

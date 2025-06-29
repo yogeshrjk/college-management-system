@@ -15,7 +15,7 @@ const eventResolvers = {
 
       // LOG THE ACTIVITY
       await Activity.create({
-        message: `Event '${newEvent.title}' created`,
+        message: `New event added: ${newEvent.title} scheduled on ${newEvent.date}`,
         type: "event",
         action: "created",
         date,

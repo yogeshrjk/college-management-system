@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { GraduationCap, Mail, LockKeyhole } from "lucide-react";
 import Tilt from "react-parallax-tilt";
-
+import { Link } from "react-router-dom";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -82,7 +82,7 @@ export default function Login() {
           <div className="mt-3 text-xs flex justify-between items-center text-[#103D46]">
             <p>Don't have an account?</p>
             <button className="py-1 px-4 bg-black/10 border text-xs border-[#103D46] ml-2 rounded-md hover:scale-110">
-              <a href="/signup">Register</a>
+              <Link to="/signup">SignUp</Link>
             </button>
           </div>
         </div>
