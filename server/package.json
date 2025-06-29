@@ -27,7 +27,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "build": "npm run build"
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "@apollo/server": "^4.12.2",
