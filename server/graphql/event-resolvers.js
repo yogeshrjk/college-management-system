@@ -8,6 +8,7 @@ const eventResolvers = {
   },
   Mutation: {
     createEvent: async (_, { input }) => {
+      // A GraphQL resolver function generally receives four (parent, args, context, info)
       const newEvent = new Event(input);
       await newEvent.save();
 

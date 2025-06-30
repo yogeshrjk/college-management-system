@@ -5,35 +5,22 @@ const { expressMiddleware } = require("@apollo/server/express4");
 const { graphqlUploadExpress } = require("graphql-upload");
 const { mergeTypeDefs, mergeResolvers } = require("@graphql-tools/merge");
 const { connectMongoDb } = require("./config/db-connect");
-
-const userTypeDefs = require("./graphql/user-schema");
-const eventTypeDefs = require("./graphql/event-schema");
-
-const userResolvers = require("./graphql/user-resolvers");
-const eventResolvers = require("./graphql/event-resolvers");
-
-const activityTypeDefs = require("./graphql/activity-schema");
-const activityResolvers = require("./graphql/activity-resolvers");
-
 const cors = require("cors");
+const { typeDefs, resolvers } = require("./graphql");
+
+const mergedTypeDefs = mergeTypeDefs(typeDefs);
+const mergedResolvers = mergeResolvers(resolvers);
+
 require("dotenv").config();
 const PORT = process.env.PORT || 8000;
-
-const typeDefs = mergeTypeDefs([userTypeDefs, eventTypeDefs, activityTypeDefs]);
-const resolvers = mergeResolvers([
-  userResolvers,
-  eventResolvers,
-  activityResolvers,
-]);
-
 const app = express();
 
 (async () => {
   try {
     // Create Apollo Server
     const apolloServer = new ApolloServer({
-      typeDefs,
-      resolvers,
+      typeDefs: mergedTypeDefs,
+      resolvers: mergedResolvers,
       csrfPrevention: false,
       formatError: (err) => {
         console.error("GraphQL error:", err);

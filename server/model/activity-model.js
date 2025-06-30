@@ -13,4 +13,4 @@ const activitySchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Activity", activitySchema);
+module.exports = mongoose.model("activities", activitySchema);

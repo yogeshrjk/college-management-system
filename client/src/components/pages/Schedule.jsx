@@ -63,14 +63,7 @@ export function Schedule() {
   const [selectedClass, setSelectedClass] = useState("CSE");
   const [selectedSemester, setSelectedSemester] = useState("Semester 3");
 
-  const days = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const timeSlots = [
     "10:00 - 10:50",
@@ -84,8 +77,8 @@ export function Schedule() {
   const currentSchedule = scheduleData[selectedClass][selectedSemester];
 
   return (
-    <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none">
-      <div className="flex flex-col gap-2 md:flex-row justify-between items-start md:items-center p-1">
+    <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none ">
+      <div className="flex flex-col gap-2 md:flex-row justify-between items-start md:items-center p-1 sm:p-3">
         <div className="flex flex-col">
           <span className="fluid-h1">Class Schedule</span>
           <span className="fluid-p text-gray-500">
@@ -102,25 +95,28 @@ export function Schedule() {
       </div>
       {/* Dropdowns */}
       <div className="flex flex-col sm:flex-row justify-between md:justify-end">
-        <div className=" p-1">
-          <label htmlFor="class-select" className="text-sm font-bold p-1 mb-1">
+        <div className=" p-1 sm:p-3">
+          <label
+            htmlFor="class-select"
+            className="text-sm font-bold p-1 sm:p-3 mb-1"
+          >
             Select Class:
           </label>
           <select
             id="class-select"
             value={selectedClass}
             onChange={(e) => setSelectedClass(e.target.value)}
-            className="px-5 py-1 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 bg-white"
+            className="text-xs sm:text-sm px-5 py-1 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 bg-white"
           >
             <option value="CSE">Computer Science</option>
             <option value="ECE">Electronics</option>
           </select>
         </div>
 
-        <div className=" p-1">
+        <div className=" p-1 sm:p-3">
           <label
             htmlFor="semester-select"
-            className="text-sm font-bold p-1 mb-1"
+            className="text-sm font-bold p-1 sm:p-3 mb-1"
           >
             Select Semester:
           </label>
@@ -128,7 +124,7 @@ export function Schedule() {
             id="semester-select"
             value={selectedSemester}
             onChange={(e) => setSelectedSemester(e.target.value)}
-            className="px-5 py-1 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 bg-white"
+            className="text-xs sm:text-sm px-5 py-1 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 bg-white"
           >
             <option value="Semester 3">Semester 3</option>
             <option value="Semester 5">Semester 5</option>
@@ -136,71 +132,89 @@ export function Schedule() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto w-full">
-        <table className="min-w-full table-auto bg-white shadow-lg border border-gray-300 text-sm">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border border-gray-300 text-left">
-                Day / Time
-              </th>
-              {timeSlots.map((time, idx) => (
-                <th
-                  key={idx}
-                  className="py-2 px-4 border border-gray-300 text-left"
-                >
-                  {time}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-3 md:col-span-2">
+          <table className="w-full table-fixed bg-white shadow-lg border border-gray-300 mx-auto sm:mx-0 ">
+            <thead>
+              <tr>
+                <th className="p-1 sm:p-3 text-center text-[6px] bg-black text-white sm:text-xs border border-gray-300">
+                  Day / Time
                 </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {days.map((day, dayIdx) => {
-              let subjectIndex = 0;
-              return (
-                <tr key={dayIdx} className="bg-white border border-gray-300">
-                  <td className="py-3 px-4 border border-gray-300 font-medium">
-                    {day}
-                  </td>
-                  {timeSlots.map((time, timeIdx) => {
-                    if (time === "12:30 - 01:40") {
-                      if (dayIdx === 0) {
-                        return (
-                          <td
-                            rowSpan={days.length}
-                            key={timeIdx}
-                            className="py-3 px-4 text-center font-bold text-gray-500 border border-gray-300"
-                          >
-                            Recess
-                          </td>
-                        );
+                {timeSlots.map((time) => (
+                  <th
+                    key={time}
+                    className="p-1 sm:p-3 border border-gray-300 bg-black text-white text-[6px] sm:text-xs text-center "
+                  >
+                    {time}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {days.map((day) => {
+                let subjectIndex = 0;
+                return (
+                  <tr key={day} className="bg-white border border-gray-300">
+                    <td className="text-center p-1 sm:p-3 text-[6px] sm:text-xs border border-gray-300 font-medium">
+                      {day}
+                    </td>
+                    {timeSlots.map((time) => {
+                      if (time === "12:30 - 01:40") {
+                        if (day === "Mon") {
+                          return (
+                            <td
+                              rowSpan={days.length}
+                              key={time}
+                              className="text-[6px] sm:text-xs text-center font-bold text-gray-500 border border-gray-300"
+                            >
+                              Recess
+                            </td>
+                          );
+                        }
+                        return null;
                       }
-                      return null;
-                    }
-                    const subject = currentSchedule.subjects[subjectIndex++];
-                    return (
-                      <td
-                        key={timeIdx}
-                        className="py-3 px-4 border border-gray-300"
-                      >
-                        {subject ? (
-                          <>
-                            <div className="font-semibold">{subject.name}</div>
-                            <div className="text-xs text-gray-500">
-                              {subject.faculty}
-                            </div>
-                          </>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-                    );
-                  })}
+                      const subject = currentSchedule.subjects[subjectIndex++];
+                      return (
+                        <td
+                          key={time}
+                          className="text-center p-1 sm:p-3 text-[6px] sm:text-xs border border-gray-300"
+                        >
+                          {subject ? subject.name : "-"}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="col-span-3 md:col-span-1">
+          <table className="w-full table-fixed bg-white shadow-md border border-gray-300">
+            <thead>
+              <tr className="bg-black text-white ">
+                <th className="text-center p-1 sm:p-3 text-[6px] sm:text-xs border border-gray-300 bg-black text-white">
+                  Subject
+                </th>
+                <th className="text-center p-1 sm:p-3 text-[6px] sm:text-xs border border-gray-300 bg-black text-white">
+                  Faculty
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentSchedule.subjects.map((subject, index) => (
+                <tr key={index}>
+                  <td className="text-center p-1 sm:p-3 text-[6px] sm:text-xs border border-gray-300">
+                    {subject.name}
+                  </td>
+                  <td className="text-center p-1 sm:p-3 text-[6px] sm:text-xs border border-gray-300">
+                    {subject.faculty}
+                  </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

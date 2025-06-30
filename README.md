@@ -37,7 +37,7 @@
 - **GraphQL** & **Apollo Server** – Flexible API queries
 - **MongoDB (Mongoose)** – Scalable database
 - **bcrypt** – Secure password hashing
-- **multer** & **cloudinary** – File uploads and storage
+- **Apollo upload client** & **cloudinary** – File uploads and storage
 - **cors** – Cross-origin resource sharing
 
 ---
@@ -90,6 +90,12 @@
    CLOUDINARY_API_KEY=your_api_key
    CLOUDINARY_API_SECRET=your_api_secret
    PORT=5000
+   ```
+
+   Create a `.env` file in the `/client` folder and aa:
+
+   ```env
+   VITE_API_BASE_URL=http://localhost:8000
    ```
 
 5. **Run the Backend**
@@ -148,7 +154,7 @@ Frontend Developer | React.js Enthusiast
 ## 🌟 Show Your Support
 
 - ⭐ **Star this repo** to help others find it!
-- 📢 Share MyCampus on [X](https://x.com/intent/tweet?text=Check%20out%20MyCampus,%20a%20full-stack%20college%20management%20system!%20https://github.com/yogeshrjk/college-management-system) or
+- 📢 Share MyCampus on [X](https://x.com/intent/tweet?text=Check%20out%20MyCampus,%20a%20full-stack%20college%20management%20system!%20https://github.com/yogeshrjk/college-management-system)
 - 📢 Share on [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://github.com/yogeshrjkcollege-management-system) or other platforms.
 
 - 💬 Join the discussion in [GitHub Discussions](https://github.com/yogeshrjk/college-management-system/discussions).

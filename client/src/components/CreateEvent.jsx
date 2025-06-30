@@ -3,7 +3,7 @@ import { gql, useMutation } from "@apollo/client";
 import { SquareX } from "lucide-react";
 export const CreateEvent = (props) => {
   const CREATE_EVENT = gql`
-    mutation CreateEvent($input: EventInput!) {
+    mutation ($input: EventInput!) {
       createEvent(input: $input) {
         _id
         title

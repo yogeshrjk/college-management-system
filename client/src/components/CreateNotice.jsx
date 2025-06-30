@@ -1,5 +1,42 @@
 import { SquareX } from "lucide-react";
+import { gql, useMutation } from "@apollo/client";
+import { showAlert } from "../utils/showAlert";
+
 export const CreateNotice = (props) => {
+  const CREATE_NOTICE = gql`
+    mutation ($input: NoticeInput!) {
+      createNotice(input: $input) {
+        id
+      }
+    }
+  `;
+
+  const [createNotice] = useMutation(CREATE_NOTICE);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    const input = {
+      title: form.title.value,
+      content: form.content.value,
+      date: form.date.value,
+      priority: form.priority.value,
+      category: form.category.value,
+      author: form.author.value,
+      isPinned: form.isPinned.checked,
+    };
+
+    try {
+      await createNotice({ variables: { input } });
+      showAlert("Notice created successfully!", "success");
+      props.setShowNoticeForm(false);
+    } catch (err) {
+      showAlert("Something went wrong while creating notice.", "error");
+      console.error("Error creating notice:", err);
+    }
+  };
+
   return (
     <>
       <div className="w-full max-w-3xl mx-auto z-20 shadow-md">
@@ -18,10 +55,10 @@ export const CreateNotice = (props) => {
               onClick={() => props.setShowNoticeForm(false)}
             />
           </div>
-          <form id="noticeForm" className="space-y-6">
+          <form id="noticeForm" className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
-                for="title"
+                htmlFor="title"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Notice Title
@@ -37,7 +74,7 @@ export const CreateNotice = (props) => {
 
             <div>
               <label
-                for="content"
+                htmlFor="content"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 content
@@ -54,7 +91,7 @@ export const CreateNotice = (props) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label
-                  for="date"
+                  htmlFor="date"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Date
@@ -68,7 +105,7 @@ export const CreateNotice = (props) => {
               </div>
               <div>
                 <label
-                  for="author"
+                  htmlFor="author"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Author
@@ -78,7 +115,7 @@ export const CreateNotice = (props) => {
                   name="author"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select author
                   </option>
                   <option value="Academic Office">Academic Office</option>
@@ -93,7 +130,7 @@ export const CreateNotice = (props) => {
               </div>
               <div>
                 <label
-                  for="category"
+                  htmlFor="category"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Category
@@ -103,7 +140,7 @@ export const CreateNotice = (props) => {
                   name="category"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select category
                   </option>
                   <option value="Festival">Festival</option>
@@ -116,7 +153,7 @@ export const CreateNotice = (props) => {
               </div>
               <div>
                 <label
-                  for="priority"
+                  htmlFor="priority"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   priority
@@ -126,7 +163,7 @@ export const CreateNotice = (props) => {
                   name="priority"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select priority
                   </option>
                   <option value="low">Low</option>
@@ -136,7 +173,16 @@ export const CreateNotice = (props) => {
               </div>
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-between">
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="isPinned"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Pin this notice
+                </label>
+                <input type="checkbox" id="isPinned" name="isPinned" />
+              </div>
               <button
                 type="submit"
                 className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200"

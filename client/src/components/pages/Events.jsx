@@ -26,7 +26,7 @@ export const Events = () => {
       }
     }
   `;
-  const { data, loading, error } = useQuery(GET_EVENT);
+  const { data } = useQuery(GET_EVENT);
   const events = data?.getEvents;
 
   return (
@@ -85,7 +85,9 @@ export const Events = () => {
                   {item.category}
                 </span>
               </div>
-              <p className="fluid-p text-gray-500">{item.description}</p>
+              <p className="fluid-p text-gray-500 line-clamp-3 pr-2">
+                {item.description}
+              </p>
               <div className="space-y-3 px-1 text-sm text-gray-500 mt-3">
                 <div className="flex gap-2 items-center">
                   <CalendarDays className="w-4 h-4" /> {item.date}
