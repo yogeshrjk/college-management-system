@@ -68,6 +68,7 @@ export const CreateNotice = (props) => {
                 id="title"
                 name="title"
                 placeholder=""
+                required
                 className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
               />
             </div>
@@ -85,6 +86,7 @@ export const CreateNotice = (props) => {
                 rows="4"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
                 placeholder=""
+                required
               ></textarea>
             </div>
 

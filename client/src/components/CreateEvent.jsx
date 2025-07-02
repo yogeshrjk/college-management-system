@@ -68,6 +68,7 @@ export const CreateEvent = (props) => {
                 id="title"
                 name="title"
                 placeholder="Annual Tech Fest 2024"
+                required
                 className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
               />
             </div>
@@ -82,6 +83,7 @@ export const CreateEvent = (props) => {
               <textarea
                 id="description"
                 name="description"
+                required
                 rows="4"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
                 placeholder="Join us for the biggest technology festival of the year featuring competitions, workshops, and exhibitions."
@@ -123,6 +125,7 @@ export const CreateEvent = (props) => {
             <div>
               <label
                 htmlFor="location"
+                required
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Location
