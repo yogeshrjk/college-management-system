@@ -57,7 +57,7 @@ export const Dashboard = () => {
   ];
 
   return (
-    <div className="px-10 py-5 flex flex-col gap-5 select-none">
+    <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none">
       <div className="flex flex-col p-1">
         <span className="fluid-h1">Dashboard</span>
         <span className="fluid-p text-gray-500">
@@ -94,7 +94,7 @@ export const Dashboard = () => {
               Latest updates from your college management system
             </p>
           </div>
-          {recentActivities.map((activity) => (
+          {recentActivities.slice(0, 4).map((activity) => (
             <div key={activity._id} className="flex flex-row gap-4 p-2">
               <div className="flex justify-center items-center bg-black/5 w-6 my-auto rounded-full">
                 <Clock className="w-4" />

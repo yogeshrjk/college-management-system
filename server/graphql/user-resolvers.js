@@ -25,8 +25,7 @@ const userResolvers = {
         password,
         profilePic,
       } = args;
-      console.log("Received profilePic type:", typeof profilePic);
-      console.log("Received profilePic:", profilePic);
+
       const existingUser = await user.findOne({ email });
       if (existingUser) throw new Error("User already exists.");
 
@@ -52,7 +51,7 @@ const userResolvers = {
 
         profilePicUrl = result.secure_url;
       }
-      console.log("profilePic value:", profilePic);
+
       const newUser = await user.create({
         firstName,
         lastName,

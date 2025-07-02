@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { showAlert } from "../../utils/showAlert";
 import { gql, useMutation } from "@apollo/client";
 import { Link } from "react-router-dom";
@@ -92,11 +92,7 @@ export default function Register() {
           tiltMaxAngleY={5}
           scale={1.04}
         >
-          <img
-            src="./img3.jpg"
-            className="rounded-2xl"
-            alt="Login Background"
-          />
+          <img src="./bg2.jpg" className="rounded-2xl" alt="Login Background" />
         </Tilt>
         <div className="flex sm:py-5 rounded-2xl items-center w-full sm:w-auto h-screen sm:h-auto">
           <div className="w-full px-8">

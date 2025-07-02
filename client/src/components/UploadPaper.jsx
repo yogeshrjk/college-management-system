@@ -3,16 +3,16 @@ import { showAlert } from "../utils/showAlert";
 import { SquareX } from "lucide-react";
 import { useState } from "react";
 
-export const UploadNotes = (props) => {
-  const CREATE_NOTES = gql`
-    mutation CreateNotes($input: CreateNotesInput!) {
-      createNotes(input: $input) {
+export const UploadPaper = (props) => {
+  const CREATE_PAPER = gql`
+    mutation CreatePapers($input: CreatePapersInput!) {
+      createPapers(input: $input) {
         id
       }
     }
   `;
 
-  const [createNotes] = useMutation(CREATE_NOTES);
+  const [createPaper] = useMutation(CREATE_PAPER);
   const [file, setFile] = useState(null);
 
   const handleSubmit = async (e) => {
@@ -27,7 +27,7 @@ export const UploadNotes = (props) => {
     try {
       const fileName = `${Date.now()}_${file.name}`;
       const [baseUrl, sasToken] =
-        import.meta.env.VITE_AZURE_SAS_BASE_URL_NOTES.split("?");
+        import.meta.env.VITE_AZURE_SAS_BASE_URL_PAPERS.split("?");
       const sasUrl = `${baseUrl}/${fileName}?${sasToken}`;
 
       await fetch(sasUrl, {
@@ -41,23 +41,24 @@ export const UploadNotes = (props) => {
 
       const fileUrl = sasUrl.split("?")[0];
 
-      await createNotes({
+      await createPaper({
         variables: {
           input: {
             title: form.title.value,
             subject: form.subject.value,
             semester: form.semester.value,
-            author: form.author.value,
-            description: form.description.value,
+            year: form.year.value,
+            examType: form.examType.value,
+            maxMarks: Number(form.maxMarks.value),
+            duration: form.duration.value,
             fileUrl,
-            fileType: file.name.split(".").pop().toLowerCase(),
             fileSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
           },
         },
       });
 
-      showAlert("Notes uploaded successfully!", "success");
-      props.setShowNotesForm(false);
+      showAlert("Paper uploaded successfully!", "success");
+      props.setShowPaperForm(false);
     } catch (err) {
       showAlert(
         err && err.message
@@ -77,19 +78,19 @@ export const UploadNotes = (props) => {
             {/* Input field for the title of the notes */}
             <div>
               <h1 className="text-xl font-bold text-gray-900 mb-2">
-                Upload Notes
+                Upload Paper
               </h1>
               <p className="text-sm text-gray-600">
-                Fill out the form below to Upload a notes file
+                Fill out the form below to Upload a Question Paper file
               </p>
             </div>
             <SquareX
               className="w-6 h-6 hover:text-red-500"
-              onClick={() => props.setShowNotesForm(false)}
+              onClick={() => props.setShowPaperForm(false)}
             />
           </div>
-          <form id="notesForm" onSubmit={handleSubmit} className="space-y-6">
-            {/* Textarea for a brief description of the notes */}
+          <form id="paperForm" onSubmit={handleSubmit} className="space-y-6">
+            {/* Titile and year */}
             <div>
               <label
                 htmlFor="title"
@@ -108,18 +109,18 @@ export const UploadNotes = (props) => {
 
             <div>
               <label
-                htmlFor="description"
+                htmlFor="year"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Description
+                Year
               </label>
-              <textarea
-                id="description"
-                name="description"
-                rows="4"
+              <input
+                type="text"
+                id="year"
+                name="year"
+                placeholder="e.g., 2023"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
-                placeholder=""
-              ></textarea>
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -171,20 +172,64 @@ export const UploadNotes = (props) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Input field for the author of the notes */}
               <div>
                 <label
-                  htmlFor="author"
+                  htmlFor="examType"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Author
+                  Exam Type
+                </label>
+                <select
+                  id="examType"
+                  name="examType"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                >
+                  <option value="" disabled>
+                    Select Exam Type
+                  </option>
+                  <option value="Mid Semester">Mid Semester</option>
+                  <option value="End Semester">End Semester</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="maxMarks"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Max Marks
                 </label>
                 <input
-                  type="text"
-                  id="author"
-                  name="author"
+                  type="number"
+                  id="maxMarks"
+                  name="maxMarks"
+                  placeholder="e.g., 100"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Input field for the duration of the notes */}
+              <div>
+                <label
+                  htmlFor="duration"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  duration
+                </label>
+                <select
+                  id="duration"
+                  name="duration"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                >
+                  <option value="" disabled>
+                    Select duration
+                  </option>
+                  <option value="1 hour">1 hour</option>
+                  <option value="2 hour">2 hour</option>
+                  <option value="3 hour">3 hour</option>
+                </select>
               </div>
               {/* File input for uploading the notes document (PDF, DOC, DOCX) */}
               <div>
@@ -210,7 +255,7 @@ export const UploadNotes = (props) => {
                 type="submit"
                 className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200"
               >
-                Upload Notes
+                Upload Paper
               </button>
             </div>
           </form>

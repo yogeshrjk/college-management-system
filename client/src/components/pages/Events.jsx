@@ -26,7 +26,14 @@ export const Events = () => {
       }
     }
   `;
-  const { data } = useQuery(GET_EVENT);
+  const { data, loading, error } = useQuery(GET_EVENT);
+  if (loading) return <p className="px-10 py-5">Loading Events...</p>;
+  if (error)
+    return (
+      <p className="px-10 py-5 text-red-500">
+        Error loading Events: {error.message}
+      </p>
+    );
   const events = data?.getEvents;
 
   return (

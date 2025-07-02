@@ -100,7 +100,7 @@ export default function Login() {
           scale={1.04}
         >
           <img
-            src="./image.png"
+            src="./bg-1.jpg"
             className="rounded-2xl"
             alt="Login Background"
           />

@@ -20,7 +20,14 @@ export const Notices = () => {
       }
     }
   `;
-  const { data } = useQuery(GET_NOTICE);
+  const { data, loading, error } = useQuery(GET_NOTICE);
+  if (loading) return <p className="px-10 py-5">Loading Notice...</p>;
+  if (error)
+    return (
+      <p className="px-10 py-5 text-red-500">
+        Error loading Notice: {error.message}
+      </p>
+    );
   const notices = data?.getNotice;
   return (
     <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none">

@@ -33,7 +33,7 @@ const app = express();
     // Middleware
     app.use(cors());
     app.use(express.json());
-    app.use(graphqlUploadExpress());
+    app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }));
 
     // Add Apollo middleware after other middleware
     app.use(

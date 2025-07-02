@@ -1,7 +1,6 @@
 const Notice = require("../model/notice-model");
 const Activity = require("../model/activity-model");
 const { getFormattedDateTime } = require("../utils/formatDateTime");
-const { Query } = require("./event-resolvers");
 
 const noticeResolvers = {
   Query: {
