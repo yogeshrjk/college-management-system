@@ -53,7 +53,10 @@ export const UploadPaper = (props) => {
             maxMarks: Number(form.maxMarks.value),
             duration: form.duration.value,
             fileUrl,
-            fileSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+            fileSize:
+              file.size < 1024 * 1024
+                ? `${(file.size / 1024).toFixed(2)} KB`
+                : `${(file.size / 1024 / 1024).toFixed(2)} MB`,
           },
         },
       });
