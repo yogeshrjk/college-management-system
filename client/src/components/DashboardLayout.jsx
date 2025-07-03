@@ -10,7 +10,6 @@ import {
   FileText,
   MessageCircle,
   ClipboardCheck,
-  GraduationCap,
   PanelRightOpen,
   PanelRightClose,
   Sheet,
@@ -108,17 +107,19 @@ export const DashboardLayout = () => {
       >
         <div
           className={`flex items-center gap-2 ${
-            isOpen ? "ml-4.5 p-0 mt-2.5" : "ml-0.5 p-2 mt-2"
+            isOpen ? "ml-4.5 p-0 mt-2" : "ml-0.5 p-2 mt-1"
           }`}
         >
-          <div className="bg-black rounded-md p-1">
-            <GraduationCap
-              className={`text-white ${isOpen ? "w-6 h-6" : "w-4 h-4"}`}
+          <div className="rounded-md p-1">
+            <img
+              src="/logo.gif"
+              alt="logo"
+              className={` ${isOpen ? "w-8 h-8 mt-1.5" : "w-6 h-6"}`}
             />
           </div>
           {isOpen && (
-            <div>
-              <span className="text-md font-bold">My Campus</span>
+            <div className="m-0">
+              <span className="text-sm sm:text-md font-bold">My Campus</span>
               <p className=" text-gray-500 text-xs">College Portal</p>
             </div>
           )}

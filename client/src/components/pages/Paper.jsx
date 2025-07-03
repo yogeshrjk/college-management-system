@@ -5,10 +5,29 @@ import { UploadPaper } from "../UploadPaper";
 import { gql, useQuery, useMutation } from "@apollo/client";
 export const Paper = () => {
   const [showPaperForm, setShowPaperForm] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const GET_PAPER = gql`
     query GetPaper {
       getPaper {
+        id
+        title
+        subject
+        semester
+        year
+        examType
+        duration
+        maxMarks
+        uploadDate
+        downloads
+        fileSize
+        fileUrl
+      }
+    }
+  `;
+  const SEARCH_PAPER = gql`
+    query SearchPaper($keyword: String!) {
+      searchPaper(keyword: $keyword) {
         id
         title
         subject
@@ -33,19 +52,29 @@ export const Paper = () => {
 
   const { data, loading, error } = useQuery(GET_PAPER);
   const [incrementDownload] = useMutation(INCREMENT_DOWNLOAD);
+  const { data: searchData } = useQuery(SEARCH_PAPER, {
+    variables: { keyword: searchKeyword },
+    skip: searchKeyword.trim() === "",
+  });
 
-  if (loading || error) {
+  if (loading)
     return (
-      <div className="px-10 py-5">
-        {loading && <p>Loading Paper...</p>}
-        {error && (
-          <p className="text-red-500">Error loading Paper: {error.message}</p>
-        )}
+      <div className="flex items-center gap-2">
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+        <p className="">Loading Paper...</p>
       </div>
     );
-  }
+  if (error)
+    return (
+      <p className="px-10 py-5 text-red-500">
+        Error loading Paper: {error.message}
+      </p>
+    );
 
-  const papers = data?.getPaper;
+  const papers =
+    searchKeyword.trim() !== "" && searchData?.searchPaper
+      ? searchData.searchPaper
+      : data?.getPaper;
 
   return (
     <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none">
@@ -73,6 +102,8 @@ export const Paper = () => {
           type="text"
           placeholder="Search question paper by subject."
           className="pl-10 py-2 text-sm border border-gray-300 bg-white rounded-md w-full focus:outline-none focus:ring-1 focus:ring-gray-500"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
         />
       </div>
       {showPaperForm && <UploadPaper setShowPaperForm={setShowPaperForm} />}

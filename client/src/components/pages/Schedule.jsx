@@ -78,8 +78,8 @@ export function Schedule() {
 
   return (
     <div className=" md:px-10 py-5 flex flex-col gap-5 select-none ">
-      <div className="px-5">
-        <div className="flex flex-col gap-2 md:flex-row justify-between items-start md:items-center p-1 sm:p-3">
+      <div className="px-5 md:px-0">
+        <div className="flex flex-col gap-2 md:flex-row justify-between items-start md:items-center">
           <div className="flex flex-col">
             <span className="fluid-h1">Class Schedule</span>
             <span className="fluid-p text-gray-500">
@@ -96,7 +96,7 @@ export function Schedule() {
           </div>
         </div>
         {/* Dropdowns */}
-        <div className="flex flex-col sm:flex-row justify-between md:justify-end">
+        <div className="flex flex-col sm:flex-row justify-between md:justify-start">
           <div className=" p-1 sm:p-3">
             <label
               htmlFor="class-select"

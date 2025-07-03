@@ -14,7 +14,7 @@ export const UploadPaper = (props) => {
 
   const [createPaper] = useMutation(CREATE_PAPER);
   const [file, setFile] = useState(null);
-
+  const [isUploading, setIsUploading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -25,6 +25,7 @@ export const UploadPaper = (props) => {
     }
 
     try {
+      setIsUploading(true);
       const fileName = `${Date.now()}_${file.name}`;
       const [baseUrl, sasToken] =
         import.meta.env.VITE_AZURE_SAS_BASE_URL_PAPERS.split("?");
@@ -63,10 +64,12 @@ export const UploadPaper = (props) => {
       showAlert(
         err && err.message
           ? err.message
-          : "Something went wrong while creating Notes.",
+          : "Something went wrong while uploading paper.",
         "error"
       );
       console.error("GraphQL Error:", JSON.stringify(err, null, 2));
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -256,12 +259,18 @@ export const UploadPaper = (props) => {
             <div className="flex justify-end">
               <button
                 type="submit"
+                disabled={isUploading}
                 className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200"
               >
                 Upload Paper
               </button>
             </div>
           </form>
+          {isUploading && (
+            <div className="fixed inset-0 bg-white/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
+              <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
         </div>
       </div>
     </>

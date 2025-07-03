@@ -14,6 +14,7 @@ export const UploadNotes = (props) => {
 
   const [createNotes] = useMutation(CREATE_NOTES);
   const [file, setFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,6 +26,7 @@ export const UploadNotes = (props) => {
     }
 
     try {
+      setIsUploading(true);
       const fileName = `${Date.now()}_${file.name}`;
       const [baseUrl, sasToken] =
         import.meta.env.VITE_AZURE_SAS_BASE_URL_NOTES.split("?");
@@ -51,7 +53,10 @@ export const UploadNotes = (props) => {
             description: form.description.value,
             fileUrl,
             fileType: file.name.split(".").pop().toLowerCase(),
-            fileSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+            fileSize:
+              file.size < 1024 * 1024
+                ? `${(file.size / 1024).toFixed(2)} KB`
+                : `${(file.size / 1024 / 1024).toFixed(2)} MB`,
           },
         },
       });
@@ -62,10 +67,12 @@ export const UploadNotes = (props) => {
       showAlert(
         err && err.message
           ? err.message
-          : "Something went wrong while creating Notes.",
+          : "Something went wrong while uploading Notes.",
         "error"
       );
       console.error("GraphQL Error:", JSON.stringify(err, null, 2));
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -209,12 +216,18 @@ export const UploadNotes = (props) => {
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200"
+                disabled={isUploading}
+                className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Upload Notes
               </button>
             </div>
           </form>
+          {isUploading && (
+            <div className="fixed inset-0 bg-white/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
+              <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -6,10 +6,29 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 
 export const Notes = () => {
   const [showNotesForm, setShowNotesForm] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const GET_NOTES = gql`
     query GetNotes {
       getNotes {
+        id
+        title
+        subject
+        semester
+        author
+        uploadDate
+        downloads
+        fileSize
+        fileType
+        description
+        fileUrl
+      }
+    }
+  `;
+
+  const SEARCH_NOTES = gql`
+    query SearchNotes($keyword: String!) {
+      searchNotes(keyword: $keyword) {
         id
         title
         subject
@@ -33,19 +52,29 @@ export const Notes = () => {
 
   const { data, loading, error } = useQuery(GET_NOTES);
   const [incrementDownload] = useMutation(INCREMENT_DOWNLOAD);
+  const { data: searchData } = useQuery(SEARCH_NOTES, {
+    variables: { keyword: searchKeyword },
+    skip: searchKeyword.trim() === "",
+  });
 
-  if (loading || error) {
+  if (loading)
     return (
-      <div className="px-10 py-5">
-        {loading && <p>Loading Notes...</p>}
-        {error && (
-          <p className="text-red-500">Error loading Notes: {error.message}</p>
-        )}
+      <div className="flex items-center gap-2">
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+        <p className="">Loading Notes...</p>
       </div>
     );
-  }
+  if (error)
+    return (
+      <p className="px-10 py-5 text-red-500">
+        Error loading Notes: {error.message}
+      </p>
+    );
 
-  const notes = data?.getNotes;
+  const notes =
+    searchKeyword.trim() !== "" && searchData?.searchNotes
+      ? searchData.searchNotes
+      : data?.getNotes;
 
   return (
     <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none">
@@ -74,8 +103,10 @@ export const Notes = () => {
         </span>
         <input
           type="text"
-          placeholder="Search notes by title or subject."
+          placeholder="Search notes by subject name..."
           className="pl-10 py-2 text-sm border border-gray-300 bg-white rounded-md w-full focus:outline-none focus:ring-1 focus:ring-gray-500"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
         />
       </div>
       {/* Notes Card */}

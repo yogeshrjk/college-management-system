@@ -5,6 +5,16 @@ const { getFormattedDateTime } = require("../utils/formatDateTime");
 const notesResolvers = {
   Query: {
     getNotes: async () => await Notes.find(),
+
+    searchNotes: async (_, { keyword }) => {
+      if (keyword.trim().length < 3) {
+        return [];
+      }
+      const regex = new RegExp(keyword, "i");
+      return await Notes.find({
+        $or: [{ title: regex }, { subject: regex }],
+      });
+    },
   },
 
   Mutation: {

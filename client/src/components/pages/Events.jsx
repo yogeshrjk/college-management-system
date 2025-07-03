@@ -27,7 +27,13 @@ export const Events = () => {
     }
   `;
   const { data, loading, error } = useQuery(GET_EVENT);
-  if (loading) return <p className="px-10 py-5">Loading Events...</p>;
+  if (loading)
+    return (
+      <div className="flex items-center gap-2">
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+        <p className="">Loading Events...</p>
+      </div>
+    );
   if (error)
     return (
       <p className="px-10 py-5 text-red-500">

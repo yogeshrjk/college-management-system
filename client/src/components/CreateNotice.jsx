@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { SquareX } from "lucide-react";
 import { gql, useMutation } from "@apollo/client";
 import { showAlert } from "../utils/showAlert";
@@ -12,7 +13,7 @@ export const CreateNotice = (props) => {
   `;
 
   const [createNotice] = useMutation(CREATE_NOTICE);
-
+  const [isUploading, setIsUploading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -28,12 +29,15 @@ export const CreateNotice = (props) => {
     };
 
     try {
+      setIsUploading(true);
       await createNotice({ variables: { input } });
       showAlert("Notice created successfully!", "success");
       props.setShowNoticeForm(false);
     } catch (err) {
       showAlert("Something went wrong while creating notice.", "error");
       console.error("Error creating notice:", err);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -187,12 +191,18 @@ export const CreateNotice = (props) => {
               </div>
               <button
                 type="submit"
+                disabled={isUploading}
                 className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200"
               >
                 Create Notice
               </button>
             </div>
           </form>
+          {isUploading && (
+            <div className="fixed inset-0 bg-white/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
+              <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
         </div>
       </div>
     </>

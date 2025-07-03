@@ -35,6 +35,7 @@ const paperTypeDefs = `
 
   type Query {
     getPaper: [Paper]
+    searchPaper(keyword: String!): [Paper]
   }
 `;
 

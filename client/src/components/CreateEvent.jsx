@@ -1,4 +1,5 @@
 import { showAlert } from "../utils/showAlert";
+import { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { SquareX } from "lucide-react";
 export const CreateEvent = (props) => {
@@ -12,7 +13,7 @@ export const CreateEvent = (props) => {
   `;
 
   const [createEvent] = useMutation(CREATE_EVENT);
-
+  const [isUploading, setIsUploading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -29,12 +30,15 @@ export const CreateEvent = (props) => {
     };
 
     try {
+      setIsUploading(true);
       await createEvent({ variables: { input } });
       showAlert("Event created successfully!", "success");
       props.setShowEventForm(false);
     } catch (err) {
       showAlert("Something went wrong while creating event.", "error");
       console.error("Error creating event:", err);
+    } finally {
+      setIsUploading(false);
     }
   };
   return (
@@ -203,12 +207,18 @@ export const CreateEvent = (props) => {
             <div className="flex justify-end">
               <button
                 type="submit"
+                disabled={isUploading}
                 className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200"
               >
                 Create Event
               </button>
             </div>
           </form>
+          {isUploading && (
+            <div className="fixed inset-0 bg-white/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
+              <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
         </div>
       </div>
     </>

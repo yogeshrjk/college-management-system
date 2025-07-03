@@ -5,6 +5,16 @@ const { getFormattedDateTime } = require("../utils/formatDateTime");
 const paperResolvers = {
   Query: {
     getPaper: async () => await Papers.find(),
+
+    searchPaper: async (_, { keyword }) => {
+      if (keyword.trim().length < 3) {
+        return [];
+      }
+      const regex = new RegExp(keyword, "i");
+      return await Papers.find({
+        $or: [{ title: regex }, { subject: regex }],
+      });
+    },
   },
 
   Mutation: {

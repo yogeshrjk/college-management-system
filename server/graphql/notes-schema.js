@@ -31,6 +31,7 @@ const notesTypeDef = `
 
   type Query {
     getNotes: [Notes]
+    searchNotes(keyword: String!): [Notes]
   }
 `;
 
