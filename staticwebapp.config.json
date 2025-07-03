@@ -1,0 +1,10 @@
+{
+  "routes": [
+    {
+      "route": "/dashboard",
+      "methods": [
+        "get"
+      ]
+    }
+  ]
+}
