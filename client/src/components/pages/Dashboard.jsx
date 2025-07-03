@@ -24,6 +24,19 @@ export const Dashboard = () => {
   `;
   const { data, loading, error } = useQuery(GET_ACTIVITIES);
   const recentActivities = data?.getActivities || [];
+  if (loading)
+    return (
+      <div className="flex items-center justify-center gap-2 h-[60vh]">
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+        <p className="">Loading Dashbord...</p>
+      </div>
+    );
+  if (error)
+    return (
+      <p className="px-10 py-5 text-red-500">
+        Error loading Dashboard: {error.message}
+      </p>
+    );
 
   const stats = [
     {
