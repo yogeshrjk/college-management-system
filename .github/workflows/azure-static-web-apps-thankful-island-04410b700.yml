@@ -1,39 +1,58 @@
-build_and_deploy_job:
-  if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-  runs-on: ubuntu-latest
-  name: Build and Deploy Job
-  permissions:
-    id-token: write
-    contents: read
+name: Azure Static Web Apps CI/CD
 
-  steps:
-    - uses: actions/checkout@v3
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
 
-    - name: Use Node.js 20
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
+jobs:
+  build_and_deploy_job:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    permissions:
+       id-token: write
+       contents: read
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: false
+      - name: Install OIDC Client from Core Package
+        run: npm install @actions/core@1.6.0 @actions/http-client
+      - name: Get Id Token
+        uses: actions/github-script@v6
+        id: idtoken
+        with:
+           script: |
+               const coredemo = require('@actions/core')
+               return await coredemo.getIDToken()
+           result-encoding: string
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_THANKFUL_ISLAND_04410B700 }}
+          action: "upload"
+          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+          app_location: "./client" # App source code path
+          api_location: "" # Api source code path - optional
+          output_location: "build" # Built app content directory - optional
+          github_id_token: ${{ steps.idtoken.outputs.result }}
+          ###### End of Repository/Build Configurations ######
 
-    - name: Install dependencies
-      run: |
-        cd client
-        npm install
-
-    - name: Build Vite App with Environment Variables
-      run: |
-        cd client
-        npm run build
-      env:
-        VITE_API_BASE_URL: "https://mycampus-fcgte0f5ard6anae.centralindia-01.azurewebsites.net"
-        VITE_AZURE_SAS_BASE_URL_NOTES: "https://mycampusstorage04.blob.core.windows.net/notesfiles?sp=rcwd&st=2025-07-02T08:38:29Z&se=2025-07-02T16:38:29Z&sv=2024-11-04&sr=c&sig=8HsjDGdnfjv7A0ZqKv0tPP7Kaq9HqT5ADG6pq%2FQlC1U%3D"
-        VITE_AZURE_SAS_BASE_URL_PAPERS: "https://mycampusstorage04.blob.core.windows.net/questionpapers?sp=rcwd&st=2025-07-02T16:38:01Z&se=2025-07-03T00:38:01Z&spr=https&sv=2024-11-04&sr=c&sig=HTa5m%2FzhAJr%2FlYBCFConwEJb9nKUxHr5HsaKfJkyHnQ%3D"
-
-    - name: Deploy to Azure Static Web Apps
-      uses: Azure/static-web-apps-deploy@v1
-      with:
-        azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_THANKFUL_ISLAND_04410B700 }}
-        action: "upload"
-        app_location: "client"
-        api_location: ""
-        output_location: "client/dist"
-        skip_app_build: true
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          action: "close"
