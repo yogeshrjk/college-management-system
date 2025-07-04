@@ -11,8 +11,13 @@ import {
   Trash2,
 } from "lucide-react";
 import { CreateEvent } from "../CreateEvent";
+import { DeleteConfirmation } from "./ui/DeleteConfirmation";
 export const Events = () => {
   const [showEventForm, setShowEventForm] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    eventId: null,
+  });
 
   const eventFormRef = useRef(null);
   useEffect(() => {
@@ -106,13 +111,9 @@ export const Events = () => {
                   <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
                   <Trash2
                     className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200 cursor-pointer"
-                    onClick={() => {
-                      if (item._id) {
-                        deleteEvent({ variables: { _id: item._id } });
-                      } else {
-                        console.error("Missing _id for item:", item);
-                      }
-                    }}
+                    onClick={() =>
+                      setDeleteConfirm({ show: true, eventId: item._id })
+                    }
                   />
                 </div>
               </div>
@@ -158,6 +159,15 @@ export const Events = () => {
             </Tilt>
           ))}
       </div>
+      {deleteConfirm.show && (
+        <DeleteConfirmation
+          onConfirm={() => {
+            deleteEvent({ variables: { _id: deleteConfirm.eventId } });
+            setDeleteConfirm({ show: false, eventId: null });
+          }}
+          onCancel={() => setDeleteConfirm({ show: false, eventId: null })}
+        />
+      )}
     </div>
   );
 };

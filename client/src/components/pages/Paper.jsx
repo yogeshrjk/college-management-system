@@ -11,9 +11,14 @@ import {
 import Tilt from "react-parallax-tilt";
 import { UploadPaper } from "../UploadPaper";
 import { gql, useQuery, useMutation } from "@apollo/client";
+import { DeleteConfirmation } from "./ui/DeleteConfirmation";
 export const Paper = () => {
   const [showPaperForm, setShowPaperForm] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    paperId: null,
+  });
 
   const GET_PAPER = gql`
     query GetPaper {
@@ -156,13 +161,9 @@ export const Paper = () => {
                       <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
                       <Trash2
                         className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
-                        onClick={() => {
-                          if (item._id) {
-                            deletePaper({ variables: { _id: item._id } });
-                          } else {
-                            console.error("Missing _id for item:", item);
-                          }
-                        }}
+                        onClick={() =>
+                          setDeleteConfirm({ show: true, paperId: item._id })
+                        }
                       />
                     </div>
                   </div>
@@ -246,6 +247,15 @@ export const Paper = () => {
             </Tilt>
           ))}
       </div>
+      {deleteConfirm.show && (
+        <DeleteConfirmation
+          onConfirm={() => {
+            deleteEvent({ variables: { _id: deleteConfirm.eventId } });
+            setDeleteConfirm({ show: false, eventId: null });
+          }}
+          onCancel={() => setDeleteConfirm({ show: false, eventId: null })}
+        />
+      )}
     </div>
   );
 };

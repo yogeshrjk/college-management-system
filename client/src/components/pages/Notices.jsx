@@ -9,9 +9,14 @@ import {
 import Tilt from "react-parallax-tilt";
 import { CreateNotice } from "../CreateNotice";
 import { gql, useQuery, useMutation } from "@apollo/client";
+import { DeleteConfirmation } from "./ui/DeleteConfirmation";
 
 export const Notices = () => {
   const [showNoticeForm, setShowNoticeForm] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    noticeId: null,
+  });
   const noticeFormRef = useRef(null);
 
   // This effect will scroll into view when the form is shown
@@ -113,13 +118,9 @@ export const Notices = () => {
                   <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
                   <Trash2
                     className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
-                    onClick={() => {
-                      if (item._id) {
-                        deleteNotice({ variables: { _id: item._id } });
-                      } else {
-                        console.error("Missing _id for item:", item);
-                      }
-                    }}
+                    onClick={() =>
+                      setDeleteConfirm({ show: true, noticeId: item._id })
+                    }
                   />
                 </div>
               </div>
@@ -160,6 +161,15 @@ export const Notices = () => {
             </Tilt>
           ))}
       </div>
+      {deleteConfirm.show && (
+        <DeleteConfirmation
+          onConfirm={() => {
+            deleteEvent({ variables: { _id: deleteConfirm.eventId } });
+            setDeleteConfirm({ show: false, eventId: null });
+          }}
+          onCancel={() => setDeleteConfirm({ show: false, eventId: null })}
+        />
+      )}
     </div>
   );
 };

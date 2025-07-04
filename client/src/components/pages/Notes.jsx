@@ -3,10 +3,15 @@ import { useState, useEffect } from "react";
 import Tilt from "react-parallax-tilt";
 import { UploadNotes } from "../UploadNotes";
 import { gql, useQuery, useMutation } from "@apollo/client";
+import { DeleteConfirmation } from "./ui/DeleteConfirmation";
 
 export const Notes = () => {
   const [showNotesForm, setShowNotesForm] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    notesId: null,
+  });
 
   const GET_NOTES = gql`
     query GetNotes {
@@ -147,13 +152,9 @@ export const Notes = () => {
                       <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
                       <Trash2
                         className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
-                        onClick={() => {
-                          if (item._id) {
-                            deleteNotes({ variables: { _id: item._id } });
-                          } else {
-                            console.error("Missing _id for item:", item);
-                          }
-                        }}
+                        onClick={() =>
+                          setDeleteConfirm({ show: true, notesId: item._id })
+                        }
                       />
                     </div>
                   </div>
@@ -229,6 +230,15 @@ export const Notes = () => {
             </Tilt>
           ))}
       </div>
+      {deleteConfirm.show && (
+        <DeleteConfirmation
+          onConfirm={() => {
+            deleteEvent({ variables: { _id: deleteConfirm.eventId } });
+            setDeleteConfirm({ show: false, eventId: null });
+          }}
+          onCancel={() => setDeleteConfirm({ show: false, eventId: null })}
+        />
+      )}
     </div>
   );
 };
