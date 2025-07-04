@@ -88,7 +88,7 @@ export function Schedule() {
             </span>
           </div>
           <div
-            className="bg-black items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+            className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
             onClick={() => setShowNoticeForm(true)}
           >
             <Sheet className="text-white w-4 h-4" />
@@ -96,11 +96,11 @@ export function Schedule() {
           </div>
         </div>
         {/* Dropdowns */}
-        <div className="flex flex-col sm:flex-row justify-between md:justify-start">
-          <div className=" p-1 sm:p-3">
+        <div className="flex flex-col gap-3 sm:flex-row justify-between md:justify-start">
+          <div>
             <label
               htmlFor="class-select"
-              className="text-sm font-bold p-1 sm:p-3 mb-1"
+              className="text-sm font-bold p-1 mb-1"
             >
               Select Class:
             </label>
@@ -115,10 +115,10 @@ export function Schedule() {
             </select>
           </div>
 
-          <div className=" p-1 sm:p-3">
+          <div>
             <label
               htmlFor="semester-select"
-              className="text-sm font-bold p-1 sm:p-3 mb-1"
+              className="text-sm font-bold p-1 mb-1"
             >
               Select Semester:
             </label>
@@ -140,13 +140,13 @@ export function Schedule() {
           <table className="table-fixed bg-white shadow-lg border border-gray-300 mx-auto sm:mx-0 ">
             <thead>
               <tr>
-                <th className="p-1 sm:p-3 text-center text-[8px] bg-black text-white sm:text-xs border border-gray-300 whitespace-normal break-words truncate">
+                <th className="p-1 sm:p-2 text-center text-[8px] bg-[#103d46] text-white sm:text-xs border border-gray-300 whitespace-normal break-words truncate">
                   Day / Time
                 </th>
                 {timeSlots.map((time) => (
                   <th
                     key={time}
-                    className="p-1 sm:p-3 border border-gray-300 bg-black text-white text-[8px] sm:text-xs text-center whitespace-normal break-words truncate"
+                    className="p-1 sm:p-2 border border-gray-300 bg-[#103d46] text-white text-[8px] sm:text-xs text-center whitespace-normal break-words truncate"
                   >
                     {time}
                   </th>
@@ -195,11 +195,11 @@ export function Schedule() {
         <div className="col-span-3 lg:col-span-1">
           <table className="w-full table-fixed bg-white shadow-md border border-gray-300">
             <thead>
-              <tr className="bg-black text-white ">
-                <th className="text-center p-1 sm:p-3 text-[8px] sm:text-xs border border-gray-300 bg-black text-white whitespace-normal break-words truncate">
+              <tr>
+                <th className="text-center p-1 sm:p-2 text-[8px] sm:text-xs border border-gray-300 bg-[#103d46] text-white whitespace-normal break-words truncate">
                   Subject
                 </th>
-                <th className="text-center p-1 sm:p-3 text-[8px] sm:text-xs border border-gray-300 bg-black text-white whitespace-normal break-words truncate">
+                <th className="text-center p-1 sm:p-2 text-[8px] sm:text-xs border border-gray-300 bg-[#103d46] text-white whitespace-normal break-words truncate">
                   Faculty
                 </th>
               </tr>

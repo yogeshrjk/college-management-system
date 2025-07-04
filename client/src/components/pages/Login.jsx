@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GraduationCap, Mail, LockKeyhole } from "lucide-react";
+import { Mail, LockKeyhole } from "lucide-react";
 import Tilt from "react-parallax-tilt";
 import { Link } from "react-router-dom";
 export default function Login() {
@@ -9,8 +9,8 @@ export default function Login() {
     <section className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center bg-white">
         <div className="md:w-1/2 p-5 md:px-12">
-          <div className="flex gap-2 justify-center items-center">
-            <GraduationCap className="w-8 h-8 text-[#103D46]" />
+          <div className="flex flex-col gap-2 justify-center items-center">
+            <img src="logo1.gif" alt="logo" className="w-15 h-15" />
             <span className="font-bold text-2xl text-[#103D46] text-center">
               MyCampus
             </span>
@@ -85,7 +85,7 @@ export default function Login() {
             <p>Don't have an account?</p>
             <Link
               to="/signup"
-              className="py-1 px-4 bg-black/10 border text-xs text-center border-[#103D46] ml-2 rounded-md hover:scale-110"
+              className="py-1 px-4 bg-[#103D46] text-white text-xs text-center ml-2 rounded-md hover:scale-110"
             >
               <button>SignUp</button>
             </Link>
@@ -100,7 +100,7 @@ export default function Login() {
           scale={1.04}
         >
           <img
-            src="./bg-1.jpg"
+            src="login_bg.jpg"
             className="rounded-2xl"
             alt="Login Background"
           />

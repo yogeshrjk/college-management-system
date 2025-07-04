@@ -20,7 +20,7 @@ const paperResolvers = {
   Mutation: {
     createPapers: async (_, { input }) => {
       const { date, time } = getFormattedDateTime();
-      const { fileSize, fileUrl, title } = input;
+      const { fileSize, fileUrl } = input;
       if (!fileUrl) throw new Error("fileUrl is required");
       const newPaper = new Papers({
         ...input,
@@ -42,8 +42,28 @@ const paperResolvers = {
       return newPaper;
     },
 
-    incrementDownloadCount: async (_, { id }) => {
-      const paper = await Papers.findById(id);
+    //Delete Paper
+    deletePaper: async (_, { _id }) => {
+      const deletedPaper = await Papers.findByIdAndDelete(_id);
+      if (!deletedPaper) {
+        throw new Error("Paper not found");
+      }
+
+      const { date, time } = getFormattedDateTime();
+
+      await Activity.create({
+        message: `Paper deleted: ${deletedPaper.title}`,
+        type: "Paper",
+        action: "deleted",
+        date,
+        time,
+      });
+
+      return deletedPaper;
+    },
+
+    incrementDownloadCount: async (_, { _id }) => {
+      const paper = await Papers.findById(_id);
       if (!paper) {
         throw new Error("Paper not found");
       }

@@ -7,7 +7,7 @@ export const UploadPaper = (props) => {
   const CREATE_PAPER = gql`
     mutation CreatePapers($input: CreatePapersInput!) {
       createPapers(input: $input) {
-        id
+        _id
       }
     }
   `;
@@ -60,7 +60,9 @@ export const UploadPaper = (props) => {
           },
         },
       });
-
+      if (props.refetchPapers) {
+        props.refetchPapers();
+      }
       showAlert("Paper uploaded successfully!", "success");
       props.setShowPaperForm(false);
     } catch (err) {
@@ -83,9 +85,7 @@ export const UploadPaper = (props) => {
           <div className=" mb-8 flex justify-between">
             {/* Input field for the title of the notes */}
             <div>
-              <h1 className="text-xl font-bold text-gray-900 mb-2">
-                Upload Paper
-              </h1>
+              <h1 className="text-xl font-bold mb-2">Upload Paper</h1>
               <p className="text-sm text-gray-600">
                 Fill out the form below to Upload a Question Paper file
               </p>
@@ -98,10 +98,7 @@ export const UploadPaper = (props) => {
           <form id="paperForm" onSubmit={handleSubmit} className="space-y-6">
             {/* Titile and year */}
             <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="title" className="block text-sm font-medium mb-1">
                 Title
               </label>
               <input
@@ -110,15 +107,12 @@ export const UploadPaper = (props) => {
                 name="title"
                 placeholder=""
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="year"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="year" className="block text-sm font-medium mb-1">
                 Year
               </label>
               <input
@@ -127,7 +121,7 @@ export const UploadPaper = (props) => {
                 name="year"
                 required
                 placeholder="e.g., 2023"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
@@ -136,14 +130,14 @@ export const UploadPaper = (props) => {
               <div>
                 <label
                   htmlFor="subject"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Subject
                 </label>
                 <select
                   id="subject"
                   name="subject"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select subject
@@ -159,14 +153,14 @@ export const UploadPaper = (props) => {
               <div>
                 <label
                   htmlFor="semester"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Semester
                 </label>
                 <select
                   id="semester"
                   name="semester"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select Semester
@@ -183,14 +177,14 @@ export const UploadPaper = (props) => {
               <div>
                 <label
                   htmlFor="examType"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Exam Type
                 </label>
                 <select
                   id="examType"
                   name="examType"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select Exam Type
@@ -204,7 +198,7 @@ export const UploadPaper = (props) => {
                 <label
                   htmlFor="maxMarks"
                   required
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Max Marks
                 </label>
@@ -213,7 +207,7 @@ export const UploadPaper = (props) => {
                   id="maxMarks"
                   name="maxMarks"
                   placeholder="e.g., 100"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
             </div>
@@ -223,14 +217,14 @@ export const UploadPaper = (props) => {
               <div>
                 <label
                   htmlFor="duration"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   duration
                 </label>
                 <select
                   id="duration"
                   name="duration"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select duration
@@ -244,7 +238,7 @@ export const UploadPaper = (props) => {
               <div>
                 <label
                   htmlFor="file"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Upload File
                 </label>
@@ -253,7 +247,7 @@ export const UploadPaper = (props) => {
                   id="file"
                   name="file"
                   accept=".pdf,.doc,.docx"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                   onChange={(e) => setFile(e.target.files[0])}
                 />
               </div>
@@ -263,7 +257,7 @@ export const UploadPaper = (props) => {
               <button
                 type="submit"
                 disabled={isUploading}
-                className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200"
+                className="px-6 py-2 bg-[#103d46] text-white rounded-md hover:bg-black transition duration-200"
               >
                 Upload Paper
               </button>
@@ -271,7 +265,7 @@ export const UploadPaper = (props) => {
           </form>
           {isUploading && (
             <div className="fixed inset-0 bg-white/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
-              <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-[#103d46] border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
         </div>

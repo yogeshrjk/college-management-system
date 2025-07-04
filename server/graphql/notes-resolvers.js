@@ -19,7 +19,7 @@ const notesResolvers = {
 
   Mutation: {
     createNotes: async (_, { input }) => {
-      const { fileSize, fileType, fileUrl, title } = input;
+      const { fileSize, fileType, fileUrl } = input;
       if (!fileUrl) throw new Error("fileUrl is required");
       const { date, time } = getFormattedDateTime();
       const newNotes = new Notes({
@@ -42,9 +42,28 @@ const notesResolvers = {
 
       return newNotes;
     },
+    //Delete Notes
+    deleteNotes: async (_, { _id }) => {
+      const deletedNotes = await Notes.findByIdAndDelete(_id);
+      if (!deletedNotes) {
+        throw new Error("Notes not found");
+      }
 
-    incrementDownloadCount: async (_, { id }) => {
-      const note = await Notes.findById(id);
+      const { date, time } = getFormattedDateTime();
+
+      await Activity.create({
+        message: `Notes deleted: ${deletedNotes.title}`,
+        type: "Notes",
+        action: "deleted",
+        date,
+        time,
+      });
+
+      return deletedNotes;
+    },
+
+    incrementDownloadCount: async (_, { _id }) => {
+      const note = await Notes.findById(_id);
       if (!note) {
         throw new Error("Note not found");
       }

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { gql, useQuery } from "@apollo/client";
+import { useEffect, useRef, useState } from "react";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import Tilt from "react-parallax-tilt";
 import {
   CalendarCheck,
@@ -7,14 +7,24 @@ import {
   MapPin,
   Users,
   CalendarDays,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { CreateEvent } from "../CreateEvent";
 export const Events = () => {
   const [showEventForm, setShowEventForm] = useState(false);
 
+  const eventFormRef = useRef(null);
+  useEffect(() => {
+    if (showEventForm && eventFormRef.current) {
+      eventFormRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [showEventForm]);
+
   const GET_EVENT = gql`
     query GetEvent {
       getEvents {
+        _id
         title
         description
         date
@@ -26,11 +36,23 @@ export const Events = () => {
       }
     }
   `;
-  const { data, loading, error } = useQuery(GET_EVENT);
+  const DELETE_EVENT = gql`
+    mutation DeleteEvent($_id: ID!) {
+      deleteEvent(_id: $_id) {
+        _id
+      }
+    }
+  `;
+  const { data, loading, error, refetch } = useQuery(GET_EVENT);
+  const [deleteEvent] = useMutation(DELETE_EVENT, {
+    refetchQueries: [{ query: GET_EVENT }],
+  });
+  useEffect(() => {}, [data]);
+
   if (loading)
     return (
       <div className="flex items-center justify-center gap-2 h-[60vh]">
-        <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#103d46] border-t-transparent"></div>
         <p className="">Loading Events...</p>
       </div>
     );
@@ -52,7 +74,7 @@ export const Events = () => {
           </span>
         </div>
         <div
-          className="bg-black items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+          className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
           onClick={() => setShowEventForm(true)}
         >
           <CalendarCheck className="text-white w-4 h-4" />
@@ -60,7 +82,7 @@ export const Events = () => {
         </div>
       </div>
       <div className={`${showEventForm ? "block" : "hidden"}`}>
-        <CreateEvent setShowEventForm={setShowEventForm} />
+        <CreateEvent setShowEventForm={setShowEventForm} refetch={refetch} />
       </div>
       {/* Event Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -68,7 +90,7 @@ export const Events = () => {
           [...events].reverse().map((item) => (
             <Tilt
               key={item.title}
-              className="bg-white shadow-md border border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10"
+              className="bg-white shadow-md border border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10 group"
               perspective={1000}
               tiltMaxAngleX={5}
               tiltMaxAngleY={5}
@@ -78,7 +100,22 @@ export const Events = () => {
               scale={1.04}
               glareColor={"#000000"}
             >
-              <span className="fluid-h2">{item.title}</span>
+              <div className="flex items-center justify-between">
+                <span className="fluid-h2">{item.title}</span>
+                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
+                  <Trash2
+                    className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200 cursor-pointer"
+                    onClick={() => {
+                      if (item._id) {
+                        deleteEvent({ variables: { _id: item._id } });
+                      } else {
+                        console.error("Missing _id for item:", item);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
 
               <div className="flex gap-3 text-xs">
                 <span
@@ -115,7 +152,7 @@ export const Events = () => {
                   <Users className="w-4 h-4" /> {item.attendees}
                 </div>
               </div>
-              <button className="text-sm py-2 font-bold bg-black/10 p-1 rounded-md hover:bg-black/20 cursor-pointer">
+              <button className="text-sm py-2 font-bold bg-[#103d46] text-white p-1 rounded-md hover:bg-black cursor-pointer">
                 View Details
               </button>
             </Tilt>

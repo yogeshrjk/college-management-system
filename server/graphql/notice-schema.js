@@ -1,6 +1,6 @@
 const noticeTypeDef = `
     type Notice{
-    id:ID!
+    _id:ID!
     title: String!
     content: String!
     date: String!
@@ -22,6 +22,7 @@ const noticeTypeDef = `
 
     type Mutation{
     createNotice(input:NoticeInput!):Notice
+    deleteNotice(_id: ID!): Notice
     }
 
     type Query{

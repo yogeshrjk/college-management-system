@@ -1,15 +1,29 @@
-import { useState } from "react";
-import { ClipboardCheck, CalendarDays, Pin } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  ClipboardCheck,
+  CalendarDays,
+  Pin,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import Tilt from "react-parallax-tilt";
 import { CreateNotice } from "../CreateNotice";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 
 export const Notices = () => {
   const [showNoticeForm, setShowNoticeForm] = useState(false);
+  const noticeFormRef = useRef(null);
 
+  // This effect will scroll into view when the form is shown
+  useEffect(() => {
+    if (showNoticeForm && noticeFormRef.current) {
+      noticeFormRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [showNoticeForm]);
   const GET_NOTICE = gql`
     query GetNotice {
       getNotice {
+        _id
         title
         content
         date
@@ -20,11 +34,23 @@ export const Notices = () => {
       }
     }
   `;
-  const { data, loading, error } = useQuery(GET_NOTICE);
+  const DELETE_NOTICE = gql`
+    mutation DeleteNotice($_id: ID!) {
+      deleteNotice(_id: $_id) {
+        _id
+      }
+    }
+  `;
+  const { data, loading, error, refetch } = useQuery(GET_NOTICE);
+  const [deleteNotice] = useMutation(DELETE_NOTICE, {
+    refetchQueries: [{ query: GET_NOTICE }],
+  });
+  useEffect(() => {}, [data]);
+
   if (loading)
     return (
       <div className="flex items-center justify-center gap-2 h-[60vh]">
-        <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#103d46] border-t-transparent"></div>
         <p className="">Loading Notice...</p>
       </div>
     );
@@ -45,7 +71,7 @@ export const Notices = () => {
           </span>
         </div>
         <div
-          className="bg-black items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+          className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
           onClick={() => setShowNoticeForm(true)}
         >
           <ClipboardCheck className="text-white w-4 h-4" />
@@ -53,7 +79,7 @@ export const Notices = () => {
         </div>
       </div>
       <div className={`${showNoticeForm ? "block" : "hidden"}`}>
-        <CreateNotice setShowNoticeForm={setShowNoticeForm} />
+        <CreateNotice setShowNoticeForm={setShowNoticeForm} refetch={refetch} />
       </div>
       {/* Notice Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -61,7 +87,7 @@ export const Notices = () => {
           [...notices].reverse().map((item) => (
             <Tilt
               key={item.title}
-              className={`bg-white shadow-md border border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10 ${
+              className={`bg-white group shadow-md border border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10 ${
                 item.isPinned ? "border-l-4 border-l-blue-500" : "border-0"
               }`}
               perspective={1000}
@@ -74,9 +100,28 @@ export const Notices = () => {
               glareColor={"#000000"}
             >
               {/* Top Section */}
-              <div className="flex gap-2 items-center">
-                {item.isPinned ? <Pin className="text-blue-500 h-4 w-4" /> : ""}
-                <span className="fluid-h2">{item.title}</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <span className="fluid-h2">{item.title}</span>
+                  {item.isPinned ? (
+                    <Pin className="text-blue-500 h-4 w-4" />
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
+                  <Trash2
+                    className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
+                    onClick={() => {
+                      if (item._id) {
+                        deleteNotice({ variables: { _id: item._id } });
+                      } else {
+                        console.error("Missing _id for item:", item);
+                      }
+                    }}
+                  />
+                </div>
               </div>
               <div className="flex gap-3 text-xs">
                 <span
@@ -108,7 +153,7 @@ export const Notices = () => {
                   </div>
                 </div>
                 {/* Button Section */}
-                <button className="w-full text-sm font-bold py-2 bg-black/10 p-1 rounded-md hover:bg-black/20 cursor-pointer">
+                <button className="w-full text-sm font-bold py-2 bg-[#103d46] text-white p-1 rounded-md hover:bg-black cursor-pointer">
                   Read More
                 </button>
               </div>

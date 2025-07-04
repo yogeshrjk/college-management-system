@@ -1,6 +1,6 @@
 const paperTypeDefs = `
   type Paper {
-    id: ID!
+    _id: ID!
     title: String!
     subject: String!
     semester: String!
@@ -30,7 +30,8 @@ const paperTypeDefs = `
 
   type Mutation {
     createPapers(input: CreatePapersInput!): Paper
-    incrementDownloadCount(id: ID!): String
+    incrementDownloadCount(_id: ID!): String
+    deletePaper(_id: ID!): Paper
   }
 
   type Query {

@@ -1,8 +1,16 @@
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { showAlert } from "../utils/showAlert";
-import { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { SquareX } from "lucide-react";
 export const CreateEvent = (props) => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openEventForm) {
+      props.setShowEventForm(true);
+    }
+  }, [location.state]);
   const CREATE_EVENT = gql`
     mutation ($input: EventInput!) {
       createEvent(input: $input) {
@@ -32,6 +40,9 @@ export const CreateEvent = (props) => {
     try {
       setIsUploading(true);
       await createEvent({ variables: { input } });
+      if (props.refetch) {
+        props.refetch();
+      }
       showAlert("Event created successfully!", "success");
       props.setShowEventForm(false);
     } catch (err) {
@@ -47,9 +58,7 @@ export const CreateEvent = (props) => {
         <div className="bg-white rounded-lg card-shadow p-6 md:p-8">
           <div className=" mb-8 flex justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-900 mb-2">
-                Create College Event
-              </h1>
+              <h1 className="text-xl font-bold mb-2">Create College Event</h1>
               <p className="text-sm text-gray-600">
                 Fill out the form below to create a new college event
               </p>
@@ -61,10 +70,7 @@ export const CreateEvent = (props) => {
           </div>
           <form id="eventForm" className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="title" className="block text-sm font-medium mb-1">
                 Event Title
               </label>
               <input
@@ -73,14 +79,14 @@ export const CreateEvent = (props) => {
                 name="title"
                 placeholder="Annual Tech Fest 2024"
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
             <div>
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 Description
               </label>
@@ -89,7 +95,7 @@ export const CreateEvent = (props) => {
                 name="description"
                 required
                 rows="4"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 placeholder="Join us for the biggest technology festival of the year featuring competitions, workshops, and exhibitions."
               ></textarea>
             </div>
@@ -98,7 +104,7 @@ export const CreateEvent = (props) => {
               <div>
                 <label
                   htmlFor="date"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Date
                 </label>
@@ -106,14 +112,14 @@ export const CreateEvent = (props) => {
                   type="date"
                   id="date"
                   name="date"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="time"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Time
                 </label>
@@ -121,7 +127,7 @@ export const CreateEvent = (props) => {
                   type="time"
                   id="time"
                   name="time"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
             </div>
@@ -130,7 +136,7 @@ export const CreateEvent = (props) => {
               <label
                 htmlFor="location"
                 required
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 Location
               </label>
@@ -139,7 +145,7 @@ export const CreateEvent = (props) => {
                 id="location"
                 name="location"
                 placeholder="Main Auditorium"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
@@ -147,7 +153,7 @@ export const CreateEvent = (props) => {
               <div>
                 <label
                   htmlFor="attendees"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Expected Attendees
                 </label>
@@ -156,21 +162,21 @@ export const CreateEvent = (props) => {
                   id="attendees"
                   name="attendees"
                   placeholder="450"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="category"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Category
                 </label>
                 <select
                   id="category"
                   name="category"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select category
@@ -188,14 +194,14 @@ export const CreateEvent = (props) => {
             <div>
               <label
                 htmlFor="status"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 Status
               </label>
               <select
                 id="status"
                 name="status"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               >
                 <option value="upcoming">Upcoming</option>
                 <option value="ongoing">Ongoing</option>
@@ -208,7 +214,7 @@ export const CreateEvent = (props) => {
               <button
                 type="submit"
                 disabled={isUploading}
-                className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200"
+                className="px-6 py-2 bg-[#103d46] text-white rounded-md hover:bg-black transition duration-200"
               >
                 Create Event
               </button>
@@ -216,7 +222,7 @@ export const CreateEvent = (props) => {
           </form>
           {isUploading && (
             <div className="fixed inset-0 bg-white/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
-              <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-[#103d46] border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
         </div>

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { showAlert } from "../../utils/showAlert";
 import { gql, useMutation } from "@apollo/client";
 import { Link } from "react-router-dom";
-import { GraduationCap } from "lucide-react";
 import Tilt from "react-parallax-tilt";
 
 const SIGNUP_MUTATION = gql`
@@ -97,7 +96,7 @@ export default function Register() {
         <div className="flex sm:py-5 rounded-2xl items-center w-full sm:w-auto h-screen sm:h-auto">
           <div className="w-full px-8">
             <div className="flex gap-2 justify-center items-center">
-              <GraduationCap className="w-8 h-8 text-[#103D46]" />
+              <img src="logo1.gif" alt="logo" className="w-8 h-8" />
               <span className="font-bold text-2xl text-[#103D46] text-center">
                 MyCampus
               </span>
@@ -293,7 +292,7 @@ export default function Register() {
 
               {/* Sign Up Button */}
               <button
-                className="p-1 mt-4 rounded-sm font-bold text-sm text-white bg-[#103D46] hover:scale-105 duration-300 w-full"
+                className="p-1 mb-4 rounded-sm font-bold text-sm text-white bg-[#103D46] hover:scale-105 duration-300 w-full"
                 type="submit"
               >
                 Sign Up
@@ -304,7 +303,7 @@ export default function Register() {
               <p className="text-sm">Already have an account?</p>
               <Link
                 to="/"
-                className="py-1 px-5 bg-black/10 text-center border rounded-md hover:scale-110 "
+                className="py-1 px-5 bg-[#103D46] text-white text-center border rounded-md hover:scale-110 "
               >
                 <button>Login</button>
               </Link>

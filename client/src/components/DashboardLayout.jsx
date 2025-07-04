@@ -112,7 +112,7 @@ export const DashboardLayout = () => {
         >
           <div className="rounded-md p-1">
             <img
-              src="/logo.gif"
+              src="/logo1.gif"
               alt="logo"
               className={` ${isOpen ? "w-8 h-8 mt-1.5" : "w-6 h-6"}`}
             />
@@ -139,7 +139,7 @@ export const DashboardLayout = () => {
               key={item.title}
               className={`flex ${
                 isOpen ? "flex-row" : "flex-col"
-              } items-center gap-2 text-gray-700 hover:bg-gray-100 p-2 rounded`}
+              } items-center gap-2 text-[#103d46] hover:bg-gray-100 p-2 rounded`}
             >
               <item.icon className={`w-5 h-5 ${isOpen ? "w-6 h-6" : ""}`} />
               {isOpen && (

@@ -1,5 +1,5 @@
-import { BookOpen, FileText, User, Download, Search } from "lucide-react";
-import { useState } from "react";
+import { BookOpen, Pencil, Trash2, User, Download, Search } from "lucide-react";
+import { useState, useEffect } from "react";
 import Tilt from "react-parallax-tilt";
 import { UploadNotes } from "../UploadNotes";
 import { gql, useQuery, useMutation } from "@apollo/client";
@@ -11,7 +11,7 @@ export const Notes = () => {
   const GET_NOTES = gql`
     query GetNotes {
       getNotes {
-        id
+        _id
         title
         subject
         semester
@@ -29,7 +29,7 @@ export const Notes = () => {
   const SEARCH_NOTES = gql`
     query SearchNotes($keyword: String!) {
       searchNotes(keyword: $keyword) {
-        id
+        _id
         title
         subject
         semester
@@ -44,14 +44,27 @@ export const Notes = () => {
     }
   `;
 
-  const INCREMENT_DOWNLOAD = gql`
-    mutation IncrementDownloadCount($id: ID!) {
-      incrementDownloadCount(id: $id)
+  const DELETE_NOTES = gql`
+    mutation DeleteNotes($_id: ID!) {
+      deleteNotes(_id: $_id) {
+        _id
+      }
     }
   `;
 
-  const { data, loading, error } = useQuery(GET_NOTES);
+  const INCREMENT_DOWNLOAD = gql`
+    mutation IncrementDownloadCount($_id: ID!) {
+      incrementDownloadCount(_id: $_id)
+    }
+  `;
+
+  const { data, loading, error, refetch } = useQuery(GET_NOTES);
   const [incrementDownload] = useMutation(INCREMENT_DOWNLOAD);
+  const [deleteNotes] = useMutation(DELETE_NOTES, {
+    refetchQueries: [{ query: GET_NOTES }],
+  });
+  useEffect(() => {}, [data]);
+
   const { data: searchData } = useQuery(SEARCH_NOTES, {
     variables: { keyword: searchKeyword },
     skip: searchKeyword.trim() === "",
@@ -60,7 +73,7 @@ export const Notes = () => {
   if (loading)
     return (
       <div className="flex items-center justify-center gap-2 h-[60vh]">
-        <div className="h-4 w-4  animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+        <div className="h-4 w-4  animate-spin rounded-full border-2 border-[#103d46] border-t-transparent"></div>
         <p className="">Loading Notes...</p>
       </div>
     );
@@ -86,7 +99,7 @@ export const Notes = () => {
           </span>
         </div>
         <div
-          className="bg-black items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+          className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
           onClick={() => setShowNotesForm(true)}
         >
           <BookOpen className="text-white w-4 h-4" />
@@ -94,7 +107,7 @@ export const Notes = () => {
         </div>
       </div>
       <div className={`${showNotesForm ? "block" : "hidden"}`}>
-        <UploadNotes setShowNotesForm={setShowNotesForm} />
+        <UploadNotes setShowNotesForm={setShowNotesForm} refetch={refetch} />
       </div>
       {/* Search bar */}
       <div className="relative w-full">
@@ -114,8 +127,8 @@ export const Notes = () => {
         {Array.isArray(notes) &&
           [...notes].reverse().map((item) => (
             <Tilt
-              key={item.id}
-              className="bg-white shadow-md border border-gray-100 rounded-md p-5 w-full relative flex flex-col z-10 h-full"
+              key={item._id}
+              className="bg-white shadow-md border border-gray-100 rounded-md p-5 w-full relative flex flex-col z-10 h-full group"
               perspective={1000}
               tiltMaxAngleX={5}
               tiltMaxAngleY={5}
@@ -128,9 +141,21 @@ export const Notes = () => {
               <div className="flex flex-col h-full">
                 {/* Top Section */}
                 <div className="flex flex-col gap-2 flex-grow">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="fluid-h2">{item.title}</span>
-                    <FileText className="h-4 w-4 text-gray-500" />
+                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
+                      <Trash2
+                        className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
+                        onClick={() => {
+                          if (item._id) {
+                            deleteNotes({ variables: { _id: item._id } });
+                          } else {
+                            console.error("Missing _id for item:", item);
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
                   <div className="flex gap-3 text-xs">
                     <span className="px-2 py-0.5 rounded-lg bg-purple-200">
@@ -165,9 +190,9 @@ export const Notes = () => {
                 <div className="mt-4 grid grid-cols-3 gap-x-2">
                   <button
                     onClick={() => {
-                      console.log("Downloading note ID:", item.id);
-                      if (item.id) {
-                        incrementDownload({ variables: { id: item.id } });
+                      console.log("Downloading note ID:", item._id);
+                      if (item._id) {
+                        incrementDownload({ variables: { _id: item._id } });
                         fetch(item.fileUrl)
                           .then((res) => res.blob())
                           .then((blob) => {
@@ -184,7 +209,7 @@ export const Notes = () => {
                         console.warn("Missing id for note:", item);
                       }
                     }}
-                    className="text-white bg-black/60 rounded-md py-2 hover:bg-black/70 cursor-pointer col-span-2"
+                    className="text-white bg-[#103d46] rounded-md py-2 hover:bg-black cursor-pointer col-span-2"
                   >
                     <span className="flex items-center justify-center gap-1 text-sm font-bold">
                       <Download className="w-4 h-4" />

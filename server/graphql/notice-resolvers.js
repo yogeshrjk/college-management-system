@@ -24,6 +24,26 @@ const noticeResolvers = {
 
       return newNotice;
     },
+
+    //Delete Notice
+    deleteNotice: async (_, { _id }) => {
+      const deletedNotice = await Notice.findByIdAndDelete(_id);
+      if (!deletedNotice) {
+        throw new Error("Notice not found");
+      }
+
+      const { date, time } = getFormattedDateTime();
+
+      await Activity.create({
+        message: `Notice deleted: ${deletedNotice.title}`,
+        type: "Notice",
+        action: "deleted",
+        date,
+        time,
+      });
+
+      return deletedNotice;
+    },
   },
 };
 

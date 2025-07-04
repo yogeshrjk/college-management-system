@@ -24,6 +24,7 @@ const eventTypeDefs = `
 
   type Mutation {
     createEvent(input: EventInput!): Event
+    deleteEvent(_id: ID!): Event
   }
 
   type Query {

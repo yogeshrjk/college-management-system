@@ -60,7 +60,7 @@ const notifications = [
 export const Notification = ({ isOpen }) => {
   return (
     <div
-      className={`flex flex-col w-full h-[70%] overflow-y-scroll scrollbar-hide sm:w-100 gap-4 absolute right-0 top-15 md:right-3 z-20 bg-white p-4 text-sm rounded-md shadow-2xl ${
+      className={`flex flex-col w-full h-[65%] overflow-y-scroll scrollbar-hide sm:w-100 gap-4 absolute right-0 top-15 md:right-3 z-20 bg-white p-4 text-sm rounded-md shadow-2xl ${
         isOpen ? "hidden" : ""
       } md:${isOpen ? "flex" : ""}`}
     >
@@ -70,16 +70,19 @@ export const Notification = ({ isOpen }) => {
         {notifications.map((item) => (
           <div
             key={item.id}
-            className="flex items-center gap-3 py-3 border-b border-gray-200"
+            className="flex items-center gap-3 py-3 border-b border-[#103d46]/50"
           >
-            {/* Left icon */}
-            <div className="flex items-center justify-center w-6 h-6">
-              <Bell className="w-4 h-4 text-blue-500" />
-            </div>
-
             {/* Notification content */}
             <div className="flex flex-col flex-grow text-sm">
-              <span className="font-medium">{item.title}</span>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-row items-center gap-2">
+                  <Bell className="w-3 h-3 text-blue-500" />
+                  <span className="font-medium">{item.title}</span>
+                </div>
+                <div className="flex items-center justify-center">
+                  <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700 cursor-pointer" />
+                </div>
+              </div>
               <span className="text-gray-600 text-xs">{item.message}</span>
               <span className="text-gray-400 text-xs">
                 {new Date(item.timestamp).toLocaleString("en-GB", {
@@ -90,11 +93,6 @@ export const Notification = ({ isOpen }) => {
                   year: "numeric",
                 })}
               </span>
-            </div>
-
-            {/* Right icon */}
-            <div className="flex items-center justify-center w-6 h-6">
-              <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700 cursor-pointer" />
             </div>
           </div>
         ))}

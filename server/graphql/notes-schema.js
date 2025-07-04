@@ -1,6 +1,6 @@
 const notesTypeDef = `
   type Notes {
-    id: ID!
+    _id: ID!
     title: String!
     subject: String!
     semester: String!
@@ -26,7 +26,8 @@ const notesTypeDef = `
 
   type Mutation {
     createNotes(input: CreateNotesInput!): Notes
-    incrementDownloadCount(id: ID!): String
+    incrementDownloadCount(_id: ID!): String
+    deleteNotes(_id: ID!): Notes
   }
 
   type Query {

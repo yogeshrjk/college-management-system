@@ -7,7 +7,7 @@ export const UploadNotes = (props) => {
   const CREATE_NOTES = gql`
     mutation CreateNotes($input: CreateNotesInput!) {
       createNotes(input: $input) {
-        id
+        _id
       }
     }
   `;
@@ -60,6 +60,9 @@ export const UploadNotes = (props) => {
           },
         },
       });
+      if (props.refetch) {
+        props.refetch();
+      }
 
       showAlert("Notes uploaded successfully!", "success");
       props.setShowNotesForm(false);
@@ -83,9 +86,7 @@ export const UploadNotes = (props) => {
           <div className=" mb-8 flex justify-between">
             {/* Input field for the title of the notes */}
             <div>
-              <h1 className="text-xl font-bold text-gray-900 mb-2">
-                Upload Notes
-              </h1>
+              <h1 className="text-xl font-bold mb-2">Upload Notes</h1>
               <p className="text-sm text-gray-600">
                 Fill out the form below to Upload a notes file
               </p>
@@ -98,10 +99,7 @@ export const UploadNotes = (props) => {
           <form id="notesForm" onSubmit={handleSubmit} className="space-y-6">
             {/* Textarea for a brief description of the notes */}
             <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="title" className="block text-sm font-medium mb-1">
                 Title
               </label>
               <input
@@ -110,14 +108,14 @@ export const UploadNotes = (props) => {
                 name="title"
                 placeholder=""
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
             <div>
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 Description
               </label>
@@ -125,7 +123,7 @@ export const UploadNotes = (props) => {
                 id="description"
                 name="description"
                 rows="4"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 placeholder=""
               ></textarea>
             </div>
@@ -135,14 +133,14 @@ export const UploadNotes = (props) => {
               <div>
                 <label
                   htmlFor="subject"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Subject
                 </label>
                 <select
                   id="subject"
                   name="subject"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select subject
@@ -158,14 +156,14 @@ export const UploadNotes = (props) => {
               <div>
                 <label
                   htmlFor="semester"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Semester
                 </label>
                 <select
                   id="semester"
                   name="semester"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select Semester
@@ -183,7 +181,7 @@ export const UploadNotes = (props) => {
               <div>
                 <label
                   htmlFor="author"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Author
                 </label>
@@ -191,14 +189,14 @@ export const UploadNotes = (props) => {
                   type="text"
                   id="author"
                   name="author"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
               {/* File input for uploading the notes document (PDF, DOC, DOCX) */}
               <div>
                 <label
                   htmlFor="file"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Upload File
                 </label>
@@ -207,7 +205,7 @@ export const UploadNotes = (props) => {
                   id="file"
                   name="file"
                   accept=".pdf,.doc,.docx"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                   onChange={(e) => setFile(e.target.files[0])}
                 />
               </div>
@@ -217,7 +215,7 @@ export const UploadNotes = (props) => {
               <button
                 type="submit"
                 disabled={isUploading}
-                className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-[#103d46] text-white rounded-md hover:bg-black transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Upload Notes
               </button>
@@ -225,7 +223,7 @@ export const UploadNotes = (props) => {
           </form>
           {isUploading && (
             <div className="fixed inset-0 bg-white/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
-              <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-[#103d46] border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
         </div>

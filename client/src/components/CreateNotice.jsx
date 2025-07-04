@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { SquareX } from "lucide-react";
 import { gql, useMutation } from "@apollo/client";
 import { showAlert } from "../utils/showAlert";
 
 export const CreateNotice = (props) => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openNoticeForm) {
+      props.setShowNoticeForm(true);
+    }
+  }, [location.state]);
+
   const CREATE_NOTICE = gql`
     mutation ($input: NoticeInput!) {
       createNotice(input: $input) {
-        id
+        _id
       }
     }
   `;
@@ -31,6 +40,9 @@ export const CreateNotice = (props) => {
     try {
       setIsUploading(true);
       await createNotice({ variables: { input } });
+      if (props.refetch) {
+        props.refetch();
+      }
       showAlert("Notice created successfully!", "success");
       props.setShowNoticeForm(false);
     } catch (err) {
@@ -47,9 +59,7 @@ export const CreateNotice = (props) => {
         <div className="bg-white rounded-lg card-shadow p-6 md:p-8">
           <div className=" mb-8 flex justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-900 mb-2">
-                Upload New Notice
-              </h1>
+              <h1 className="text-xl font-bold mb-2">Upload New Notice</h1>
               <p className="text-sm text-gray-600">
                 Fill out the form below to create a new college notice
               </p>
@@ -61,10 +71,7 @@ export const CreateNotice = (props) => {
           </div>
           <form id="noticeForm" className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="title" className="block text-sm font-medium mb-1">
                 Notice Title
               </label>
               <input
@@ -73,14 +80,14 @@ export const CreateNotice = (props) => {
                 name="title"
                 placeholder=""
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
             <div>
               <label
                 htmlFor="content"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 content
               </label>
@@ -88,7 +95,7 @@ export const CreateNotice = (props) => {
                 id="content"
                 name="content"
                 rows="4"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 placeholder=""
                 required
               ></textarea>
@@ -98,7 +105,7 @@ export const CreateNotice = (props) => {
               <div>
                 <label
                   htmlFor="date"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Date
                 </label>
@@ -106,20 +113,20 @@ export const CreateNotice = (props) => {
                   type="date"
                   id="date"
                   name="date"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
               <div>
                 <label
                   htmlFor="author"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Author
                 </label>
                 <select
                   id="author"
                   name="author"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select author
@@ -137,14 +144,14 @@ export const CreateNotice = (props) => {
               <div>
                 <label
                   htmlFor="category"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   Category
                 </label>
                 <select
                   id="category"
                   name="category"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select category
@@ -160,14 +167,14 @@ export const CreateNotice = (props) => {
               <div>
                 <label
                   htmlFor="priority"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium mb-1"
                 >
                   priority
                 </label>
                 <select
                   id="priority"
                   name="priority"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:border-gray-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
                     Select priority
@@ -181,10 +188,7 @@ export const CreateNotice = (props) => {
 
             <div className="flex justify-between">
               <div className="flex items-center gap-2">
-                <label
-                  htmlFor="isPinned"
-                  className="text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="isPinned" className="text-sm font-medium">
                   Pin this notice
                 </label>
                 <input type="checkbox" id="isPinned" name="isPinned" />
@@ -192,7 +196,7 @@ export const CreateNotice = (props) => {
               <button
                 type="submit"
                 disabled={isUploading}
-                className="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition duration-200"
+                className="px-6 py-2 bg-[#103d46] text-white rounded-md hover:bg-black transition duration-200"
               >
                 Create Notice
               </button>
@@ -200,7 +204,7 @@ export const CreateNotice = (props) => {
           </form>
           {isUploading && (
             <div className="fixed inset-0 bg-white/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
-              <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-[#103d46] border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
         </div>

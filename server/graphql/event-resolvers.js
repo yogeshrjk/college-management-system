@@ -8,7 +8,7 @@ const eventResolvers = {
   },
   Mutation: {
     createEvent: async (_, { input }) => {
-      // A GraphQL resolver function generally receives four (parent, args, context, info)
+      // A GraphQL resolver function generally receives four parameter (parent, args, context, info)
       const newEvent = new Event(input);
       await newEvent.save();
 
@@ -24,6 +24,25 @@ const eventResolvers = {
       });
 
       return newEvent;
+    },
+    //Delete Event
+    deleteEvent: async (_, { _id }) => {
+      const deletedEvent = await Event.findByIdAndDelete(_id);
+      if (!deletedEvent) {
+        throw new Error("Event not found");
+      }
+
+      const { date, time } = getFormattedDateTime();
+
+      await Activity.create({
+        message: `Event deleted: ${deletedEvent.title}`,
+        type: "event",
+        action: "deleted",
+        date,
+        time,
+      });
+
+      return deletedEvent;
     },
   },
 };
