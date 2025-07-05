@@ -233,10 +233,10 @@ export const Notes = () => {
       {deleteConfirm.show && (
         <DeleteConfirmation
           onConfirm={() => {
-            deleteEvent({ variables: { _id: deleteConfirm.eventId } });
-            setDeleteConfirm({ show: false, eventId: null });
+            deleteNotes({ variables: { _id: deleteConfirm.notesId } });
+            setDeleteConfirm({ show: false, notesId: null });
           }}
-          onCancel={() => setDeleteConfirm({ show: false, eventId: null })}
+          onCancel={() => setDeleteConfirm({ show: false, notesId: null })}
         />
       )}
     </div>

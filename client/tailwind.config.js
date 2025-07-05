@@ -1,0 +1,1 @@
+plugins: [require("tailwind-scrollbar")];

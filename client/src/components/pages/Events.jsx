@@ -18,6 +18,7 @@ export const Events = () => {
     show: false,
     eventId: null,
   });
+  const [editEventData, setEditEventData] = useState(null);
 
   const eventFormRef = useRef(null);
   useEffect(() => {
@@ -48,10 +49,30 @@ export const Events = () => {
       }
     }
   `;
+  const UPDATE_EVENT = gql`
+    mutation UpdateEvent($_id: ID!, $input: EventInput!) {
+      updateEvent(_id: $_id, input: $input) {
+        _id
+        title
+        description
+        date
+        time
+        location
+        attendees
+        category
+        status
+      }
+    }
+  `;
+
   const { data, loading, error, refetch } = useQuery(GET_EVENT);
   const [deleteEvent] = useMutation(DELETE_EVENT, {
     refetchQueries: [{ query: GET_EVENT }],
   });
+  const [updateEvent] = useMutation(UPDATE_EVENT, {
+    refetchQueries: [{ query: GET_EVENT }],
+  });
+
   useEffect(() => {}, [data]);
 
   if (loading)
@@ -70,7 +91,7 @@ export const Events = () => {
   const events = data?.getEvents;
 
   return (
-    <div className="px-5 md:px-10 py-5 flex flex-col gap-5 select-none">
+    <div className="px-5 md:px-10 py-5 flex flex-col gap-5">
       <div className="flex flex-col gap-2 md:flex-row justify-between items-start md:items-center p-1">
         <div className="flex flex-col">
           <span className="fluid-h1">Events</span>
@@ -80,14 +101,22 @@ export const Events = () => {
         </div>
         <div
           className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
-          onClick={() => setShowEventForm(true)}
+          onClick={() => {
+            setShowEventForm(true);
+            setEditEventData(null);
+          }}
         >
           <CalendarCheck className="text-white w-4 h-4" />
           <span className="text-white text-sm">Create Event</span>
         </div>
       </div>
       <div className={`${showEventForm ? "block" : "hidden"}`}>
-        <CreateEvent setShowEventForm={setShowEventForm} refetch={refetch} />
+        <CreateEvent
+          setShowEventForm={setShowEventForm}
+          refetch={refetch}
+          eventData={editEventData}
+          updateEvent={updateEvent}
+        />
       </div>
       {/* Event Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -108,7 +137,13 @@ export const Events = () => {
               <div className="flex items-center justify-between">
                 <span className="fluid-h2">{item.title}</span>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
+                  <Pencil
+                    className="w-4 h-4 hover:scale-125 transition-shadow duration-200 "
+                    onClick={() => {
+                      setEditEventData(item);
+                      setShowEventForm(true);
+                    }}
+                  />
                   <Trash2
                     className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200 cursor-pointer"
                     onClick={() =>

@@ -22,6 +22,7 @@ const noticeTypeDef = `
 
     type Mutation{
     createNotice(input:NoticeInput!):Notice
+    updateNotice(_id: ID!, input: NoticeInput!): Notice
     deleteNotice(_id: ID!): Notice
     }
 

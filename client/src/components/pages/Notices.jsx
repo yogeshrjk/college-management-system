@@ -17,6 +17,7 @@ export const Notices = () => {
     show: false,
     noticeId: null,
   });
+  const [editNoticeData, setEditNoticeData] = useState(null);
   const noticeFormRef = useRef(null);
 
   // This effect will scroll into view when the form is shown
@@ -39,6 +40,20 @@ export const Notices = () => {
       }
     }
   `;
+  const UPDATE_NOTICE = gql`
+    mutation UpdateNotice($_id: ID!, $input: NoticeInput!) {
+      updateNotice(_id: $_id, input: $input) {
+        _id
+        title
+        content
+        date
+        priority
+        category
+        isPinned
+        author
+      }
+    }
+  `;
   const DELETE_NOTICE = gql`
     mutation DeleteNotice($_id: ID!) {
       deleteNotice(_id: $_id) {
@@ -48,6 +63,9 @@ export const Notices = () => {
   `;
   const { data, loading, error, refetch } = useQuery(GET_NOTICE);
   const [deleteNotice] = useMutation(DELETE_NOTICE, {
+    refetchQueries: [{ query: GET_NOTICE }],
+  });
+  const [updateNotice] = useMutation(UPDATE_NOTICE, {
     refetchQueries: [{ query: GET_NOTICE }],
   });
   useEffect(() => {}, [data]);
@@ -77,14 +95,22 @@ export const Notices = () => {
         </div>
         <div
           className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
-          onClick={() => setShowNoticeForm(true)}
+          onClick={() => {
+            setShowNoticeForm(true);
+            setEditNoticeData(null);
+          }}
         >
           <ClipboardCheck className="text-white w-4 h-4" />
           <span className="text-white text-sm">Create Notice</span>
         </div>
       </div>
       <div className={`${showNoticeForm ? "block" : "hidden"}`}>
-        <CreateNotice setShowNoticeForm={setShowNoticeForm} refetch={refetch} />
+        <CreateNotice
+          setShowNoticeForm={setShowNoticeForm}
+          refetch={refetch}
+          noticeData={editNoticeData}
+          updateNotice={updateNotice}
+        />
       </div>
       {/* Notice Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -115,7 +141,13 @@ export const Notices = () => {
                   )}
                 </div>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
+                  <Pencil
+                    className="w-4 h-4 hover:scale-125 transition-shadow duration-200 "
+                    onClick={() => {
+                      setEditNoticeData(item);
+                      setShowNoticeForm(true);
+                    }}
+                  />
                   <Trash2
                     className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
                     onClick={() =>
@@ -164,10 +196,10 @@ export const Notices = () => {
       {deleteConfirm.show && (
         <DeleteConfirmation
           onConfirm={() => {
-            deleteEvent({ variables: { _id: deleteConfirm.eventId } });
-            setDeleteConfirm({ show: false, eventId: null });
+            deleteNotice({ variables: { _id: deleteConfirm.noticeId } });
+            setDeleteConfirm({ show: false, noticeId: null });
           }}
-          onCancel={() => setDeleteConfirm({ show: false, eventId: null })}
+          onCancel={() => setDeleteConfirm({ show: false, noticeId: null })}
         />
       )}
     </div>

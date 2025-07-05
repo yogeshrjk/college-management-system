@@ -9,6 +9,7 @@ import { Schedule } from "./components/pages/Schedule";
 import "./app.css";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/SignUp";
+import AskAI from "./components/pages/AskAI";
 function App() {
   return (
     <BrowserRouter>
@@ -21,6 +22,7 @@ function App() {
           <Route path="notices" element={<Notices />} />
           <Route path="notes" element={<Notes />} />
           <Route path="papers" element={<Paper />} />
+          <Route path="askai" element={<AskAI />} />
           <Route path="schedule" element={<Schedule />} />
         </Route>
       </Routes>

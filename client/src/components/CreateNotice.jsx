@@ -6,12 +6,24 @@ import { showAlert } from "../utils/showAlert";
 
 export const CreateNotice = (props) => {
   const location = useLocation();
+  const [priority, setPriority] = useState(
+    props.noticeData?.priority || "upcoming"
+  );
+  const [category, setCategory] = useState(props.noticeData?.category || "");
+  const [author, setAuthor] = useState(props.noticeData?.author || "");
+  const [isPinned, setIsPinned] = useState(props.noticeData?.isPinned || "");
 
   useEffect(() => {
     if (location.state?.openNoticeForm) {
       props.setShowNoticeForm(true);
     }
-  }, [location.state]);
+    if (props.noticeData) {
+      setPriority(props.noticeData.status || "upcoming");
+      setCategory(props.noticeData.category || "");
+      setAuthor(props.noticeData.author || "");
+      setIsPinned(props.noticeData.isPinned || "");
+    }
+  }, [location.state, props.noticeData]);
 
   const CREATE_NOTICE = gql`
     mutation ($input: NoticeInput!) {
@@ -20,8 +32,17 @@ export const CreateNotice = (props) => {
       }
     }
   `;
+  const UPDATE_NOTICE = gql`
+    mutation UpdateNotice($_id: ID!, $input: NoticeInput!) {
+      updateNotice(_id: $_id, input: $input) {
+        _id
+        title
+      }
+    }
+  `;
 
   const [createNotice] = useMutation(CREATE_NOTICE);
+  const [runUpdateNotice] = useMutation(UPDATE_NOTICE);
   const [isUploading, setIsUploading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,15 +52,24 @@ export const CreateNotice = (props) => {
       title: form.title.value,
       content: form.content.value,
       date: form.date.value,
-      priority: form.priority.value,
-      category: form.category.value,
-      author: form.author.value,
-      isPinned: form.isPinned.checked,
+      priority,
+      category,
+      author,
+      isPinned,
     };
 
     try {
       setIsUploading(true);
-      await createNotice({ variables: { input } });
+      if (props.noticeData?._id) {
+        await runUpdateNotice({
+          variables: { _id: props.noticeData._id, input },
+        });
+        showAlert("Notice updated successfully!", "success");
+      } else {
+        await createNotice({ variables: { input } });
+        showAlert("Notice created successfully!", "success");
+      }
+
       if (props.refetch) {
         props.refetch();
       }
@@ -59,9 +89,12 @@ export const CreateNotice = (props) => {
         <div className="bg-white rounded-lg card-shadow p-6 md:p-8">
           <div className=" mb-8 flex justify-between">
             <div>
-              <h1 className="text-xl font-bold mb-2">Upload New Notice</h1>
+              <h1 className="text-xl font-bold mb-2">
+                {props.noticeData ? "Update Notice" : "Create New Notice"}
+              </h1>
               <p className="text-sm text-gray-600">
-                Fill out the form below to create a new college notice
+                Fill out the form below to{" "}
+                {props.noticeData ? "update" : "create a new"} notice
               </p>
             </div>
             <SquareX
@@ -80,6 +113,7 @@ export const CreateNotice = (props) => {
                 name="title"
                 placeholder=""
                 required
+                defaultValue={props.noticeData?.title || ""}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
@@ -98,6 +132,7 @@ export const CreateNotice = (props) => {
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 placeholder=""
                 required
+                defaultValue={props.noticeData?.content || ""}
               ></textarea>
             </div>
 
@@ -113,6 +148,7 @@ export const CreateNotice = (props) => {
                   type="date"
                   id="date"
                   name="date"
+                  defaultValue={props.noticeData?.date || ""}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
@@ -126,6 +162,8 @@ export const CreateNotice = (props) => {
                 <select
                   id="author"
                   name="author"
+                  value={author}
+                  onChange={(e) => setAuthor(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
@@ -151,6 +189,8 @@ export const CreateNotice = (props) => {
                 <select
                   id="category"
                   name="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
@@ -174,6 +214,8 @@ export const CreateNotice = (props) => {
                 <select
                   id="priority"
                   name="priority"
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
@@ -191,14 +233,20 @@ export const CreateNotice = (props) => {
                 <label htmlFor="isPinned" className="text-sm font-medium">
                   Pin this notice
                 </label>
-                <input type="checkbox" id="isPinned" name="isPinned" />
+                <input
+                  type="checkbox"
+                  id="isPinned"
+                  checked={isPinned}
+                  onChange={(e) => setIsPinned(e.target.checked)}
+                  name="isPinned"
+                />
               </div>
               <button
                 type="submit"
                 disabled={isUploading}
                 className="px-6 py-2 bg-[#103d46] text-white rounded-md hover:bg-black transition duration-200"
               >
-                Create Notice
+                {props.noticeData ? "Update Notice" : "Create Notice"}
               </button>
             </div>
           </form>

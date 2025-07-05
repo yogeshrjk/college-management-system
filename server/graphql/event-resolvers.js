@@ -3,18 +3,19 @@ const Activity = require("../model/activity-model");
 const { getFormattedDateTime } = require("../utils/formatDateTime");
 
 const eventResolvers = {
+  //Get Events
   Query: {
     getEvents: async () => await Event.find(),
   },
+
   Mutation: {
+    //Create Event
     createEvent: async (_, { input }) => {
-      // A GraphQL resolver function generally receives four parameter (parent, args, context, info)
       const newEvent = new Event(input);
       await newEvent.save();
 
       const { date, time } = getFormattedDateTime();
 
-      // LOG THE ACTIVITY
       await Activity.create({
         message: `New event added: ${newEvent.title} scheduled on ${newEvent.date}`,
         type: "event",
@@ -43,6 +44,31 @@ const eventResolvers = {
       });
 
       return deletedEvent;
+    },
+
+    // Update Event
+    updateEvent: async (_, { _id, input }) => {
+      const updatedEvent = await Event.findByIdAndUpdate(
+        _id,
+        { $set: input },
+        { new: true }
+      );
+
+      if (!updatedEvent) {
+        throw new Error("Event not found");
+      }
+
+      const { date, time } = getFormattedDateTime();
+
+      await Activity.create({
+        message: `Event updated: ${updatedEvent.title}`,
+        type: "event",
+        action: "updated",
+        date,
+        time,
+      });
+
+      return updatedEvent;
     },
   },
 };

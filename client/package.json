@@ -16,10 +16,12 @@
     "graphql": "^16.11.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.522.0",
+    "marked": "^16.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-parallax-tilt": "^1.7.298",
     "react-router-dom": "^7.6.2",
+    "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.1.10"
   },
   "devDependencies": {

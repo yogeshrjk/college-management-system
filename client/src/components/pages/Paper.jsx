@@ -117,6 +117,12 @@ export const Paper = () => {
           <span className="text-white text-sm">Upload Paper</span>
         </div>
       </div>
+      {showPaperForm && (
+        <UploadPaper
+          setShowPaperForm={setShowPaperForm}
+          refetchPapers={refetch}
+        />
+      )}
       {/* Search bar */}
       <div className="relative w-full">
         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
@@ -130,12 +136,6 @@ export const Paper = () => {
           onChange={(e) => setSearchKeyword(e.target.value)}
         />
       </div>
-      {showPaperForm && (
-        <UploadPaper
-          setShowPaperForm={setShowPaperForm}
-          refetchPapers={refetch}
-        />
-      )}
       {/* Papers Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.isArray(papers) &&
@@ -250,10 +250,10 @@ export const Paper = () => {
       {deleteConfirm.show && (
         <DeleteConfirmation
           onConfirm={() => {
-            deleteEvent({ variables: { _id: deleteConfirm.eventId } });
-            setDeleteConfirm({ show: false, eventId: null });
+            deletePaper({ variables: { _id: deleteConfirm.paperId } });
+            setDeleteConfirm({ show: false, paperId: null });
           }}
-          onCancel={() => setDeleteConfirm({ show: false, eventId: null })}
+          onCancel={() => setDeleteConfirm({ show: false, paperId: null })}
         />
       )}
     </div>

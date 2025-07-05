@@ -1,7 +1,7 @@
 const eventTypeDefs = `
   type Event {
     _id: ID!
-    title: String!
+    title: String
     description: String
     date: String
     time: String
@@ -12,7 +12,7 @@ const eventTypeDefs = `
   }
 
   input EventInput {
-    title: String!
+    title: String
     description: String
     date: String
     time: String
@@ -24,6 +24,7 @@ const eventTypeDefs = `
 
   type Mutation {
     createEvent(input: EventInput!): Event
+    updateEvent(_id: ID!, input: EventInput!): Event
     deleteEvent(_id: ID!): Event
   }
 

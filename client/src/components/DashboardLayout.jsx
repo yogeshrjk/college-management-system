@@ -8,7 +8,7 @@ import {
   Bell,
   BookOpen,
   FileText,
-  MessageCircle,
+  BotMessageSquare,
   ClipboardCheck,
   PanelRightOpen,
   PanelRightClose,
@@ -44,9 +44,9 @@ const navigationItems = [
     icon: FileText,
   },
   {
-    title: "Chat",
-    url: "/chat",
-    icon: MessageCircle,
+    title: "Ask AI",
+    url: "/askai",
+    icon: BotMessageSquare,
   },
   {
     title: "Schedule",
