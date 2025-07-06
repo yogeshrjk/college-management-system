@@ -158,8 +158,9 @@ export const DashboardLayout = () => {
           </div>
         ) : (
           <span className="text-sm text-gray-400 p-4 mb-5">
-            All-in-one campus command center — where schedules, studies, and
-            students stay in sync.
+            All In One Place
+            <br />
+            Schedule Smarter, Study Smarter
           </span>
         )}
       </div>
