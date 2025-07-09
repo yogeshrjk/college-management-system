@@ -5,11 +5,12 @@ import {
   MessageSquare,
   Clock,
   Users,
-  TrendingUp,
+  Bug,
 } from "lucide-react";
 import Tilt from "react-parallax-tilt";
 import { gql, useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
+
 export const Dashboard = () => {
   const GET_ACTIVITIES = gql`
     query GetActivities {
@@ -82,7 +83,7 @@ export const Dashboard = () => {
         {stats.map((stat) => (
           <Tilt
             key={stat.title}
-            className="bg-white shadow-md border border-gray-100 rounded-md p-4 w-full md:w-1/4 relative flex flex-col"
+            className="bg-white dark:bg-black/20 shadow-md border border-gray-100 dark:border-0 rounded-md p-4 w-full md:w-1/4 relative flex flex-col"
             perspective={1000}
             tiltMaxAngleX={5}
             tiltMaxAngleY={5}
@@ -101,7 +102,7 @@ export const Dashboard = () => {
       </div>
       <div className="flex flex-col gap-4 md:flex-row">
         {/* Recent Activities */}
-        <div className="bg-white shadow-md border border-gray-100  rounded-md p-4 md:w-[60%] w-full">
+        <div className="bg-white dark:bg-black/20 shadow-md border border-gray-100 dark:border-0  rounded-md p-4 md:w-[60%] w-full">
           <div className="p-1 ml-2">
             <span className="fluid-h2">Recent Activity</span>
             <p className="text-gray-500 fluid-p">
@@ -110,7 +111,7 @@ export const Dashboard = () => {
           </div>
           {recentActivities.slice(0, 4).map((activity) => (
             <div key={activity._id} className="flex flex-row gap-4 p-2">
-              <div className="flex justify-center items-center bg-black/5 w-6 my-auto rounded-full">
+              <div className="flex justify-center items-center bg-black/20/5 w-6 my-auto rounded-full">
                 <Clock className="w-4" />
               </div>
               <div className="flex flex-col">
@@ -123,31 +124,34 @@ export const Dashboard = () => {
           ))}
         </div>
         {/* Qick Actions */}
-        <div className="bg-white shadow-md border border-gray-100  rounded-md px-6 py-4 md:w-[40%] w-full mb-5 md:mb-0">
+        <div className="bg-white dark:bg-black/20 shadow-md border border-gray-100 dark:border-0  rounded-md px-6 py-4 md:w-[40%] w-full mb-5 md:mb-0">
           <div>
             <span className="fluid-h2">Quick Actions</span>
             <p className="text-gray-500 fluid-p">Frequently used features</p>
           </div>
           <div className="grid gap-3 mt-4">
-            <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/5 p-3 hover:bg-black/10 text-left hover:bg-accent">
+            <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/20/10 hover:dark:bg-white/10 text-left hover:bg-accent">
               <Users className="h-4 w-4" />
               <span className="text-sm">Add New Student</span>
             </button>
             <Link to="/events" state={{ openEventForm: true }}>
-              <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/5 p-3 hover:bg-black/10 text-left hover:bg-accent">
+              <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/20/10 hover:dark:bg-white/10 text-left hover:bg-accent">
                 <Calendar className="h-4 w-4" />
                 <span className="text-sm">Schedule Event</span>
               </button>
             </Link>
             <Link to="/notices" state={{ openNoticeForm: true }}>
-              <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/5 p-3 hover:bg-black/10 text-left hover:bg-accent">
+              <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/20/10 hover:dark:bg-white/10 text-left hover:bg-accent">
                 <BookOpen className="h-4 w-4" />
                 <span className="text-sm">Create Notice</span>
               </button>
             </Link>
-            <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/5 p-3 hover:bg-black/10 text-left hover:bg-accent">
-              <TrendingUp className="h-4 w-4" />
-              <span className="text-sm">View Reports</span>
+            <button
+              className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/20/10 hover:dark:bg-white/10 text-left hover:bg-accent"
+              data-capture-trigger="extended"
+            >
+              <Bug className="h-4 w-4" />
+              <span className="text-sm">Report a Bug</span>
             </button>
           </div>
         </div>

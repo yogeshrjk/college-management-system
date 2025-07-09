@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
+import Profile from "./pages/ui/Profile";
+import Settings from "./pages/ui/Settings";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -48,28 +50,43 @@ const navigationItems = [
     url: "/askai",
     icon: BotMessageSquare,
   },
-  {
-    title: "Schedule",
-    url: "/schedule",
-    icon: Sheet,
-  },
+  // {
+  //   title: "Schedule",
+  //   url: "/schedule",
+  //   icon: Sheet,
+  // },
 ];
 
 export const DashboardLayout = () => {
-  const [isOpen, setIsOpen] = useState(true);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [profilePicUrl, setProfilePicUrl] = useState("");
+  const [isOpen, setIsOpen] = useState(true); //navigation panel
+  const [isProfileOpen, setIsProfileOpen] = useState(false); //samll profile dropdown
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false); //notification droopdown
+  const [profilePicUrl, setProfilePicUrl] = useState(""); //setting profile pic
+  const [showProfile, setShowProfile] = useState(false); //full profile setting
+  const [showSettings, setShowSettings] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/";
+    }
+  }, []);
 
   const GET_USER = gql`
     query GetUser($id: ID!) {
       getUser(id: $id) {
         profilePic
+        firstName
+        lastName
+        phoneNumber
+        dob
+        email
+        gender
       }
     }
   `;
   const { data, loading, error } = useQuery(GET_USER, {
-    variables: { id: "685ab7247ab69663853ff554" },
+    variables: { id: localStorage.getItem("userId") },
   });
 
   useEffect(() => {
@@ -86,7 +103,7 @@ export const DashboardLayout = () => {
 
   return (
     <div
-      className="h-screen flex bg-gray-100 select-none"
+      className="h-screen flex bg-gray-100 dark:bg-gray-800 select-none"
       onClick={(e) => {
         // Close only if the click target is outside the profile and bell icons
         const isClickInsideIcon =
@@ -99,7 +116,7 @@ export const DashboardLayout = () => {
     >
       {/* Side panel */}
       <div
-        className={`fixed top-0 left-0 h-screen bg-white shadow-md flex flex-col justify-between transition-all duration-300 z-20 ${
+        className={`fixed top-0 left-0 h-screen bg-white dark:bg-gray-900 shadow-md flex flex-col justify-between transition-all duration-300 z-20 ${
           isOpen
             ? "w-[200px] items-start"
             : "hidden md:flex w-[60px] items-center"
@@ -139,7 +156,7 @@ export const DashboardLayout = () => {
               key={item.title}
               className={`flex ${
                 isOpen ? "flex-row" : "flex-col"
-              } items-center gap-2 text-[#103d46] hover:bg-gray-100 p-2 rounded`}
+              } items-center gap-2 text-[#103d46] dark:text-white hover:bg-gray-100 hover:dark:bg-white/10 p-2 rounded`}
             >
               <item.icon className={`w-5 h-5 ${isOpen ? "w-6 h-6" : ""}`} />
               {isOpen && (
@@ -171,7 +188,7 @@ export const DashboardLayout = () => {
         }`}
       >
         {/* top bar */}
-        <div className="flex justify-between items-center p-3 shadow-[0_4px_4px_-2px_rgba(0,0,0,0.1)] bg-white">
+        <div className="flex justify-between items-center p-3 shadow-[0_4px_4px_-2px_rgba(0,0,0,0.1)] bg-white dark:bg-gray-900">
           <div className="flex justify-center items-center gap-4">
             {isOpen ? (
               <PanelRightOpen
@@ -193,10 +210,16 @@ export const DashboardLayout = () => {
           </div>
 
           <div className="flex justify-center items-center gap-4 mr-5">
-            <Bell
-              className="bell-icon"
-              onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-            />
+            <div
+              className="relative cursor-pointer"
+              onClick={(e) => {
+                setIsNotificationOpen(!isNotificationOpen);
+                e.stopPropagation();
+              }}
+            >
+              <Bell />
+              <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+            </div>
             <div
               className="bg-gray-500 rounded-full cursor-pointer profile-icon"
               onClick={(e) => {
@@ -216,7 +239,14 @@ export const DashboardLayout = () => {
           </div>
 
           {/* Profile section */}
-          {isProfileOpen && <ProfileDropdown isOpen={isOpen} />}
+          {isProfileOpen && (
+            <ProfileDropdown
+              isOpen={isProfileOpen}
+              setIsProfileOpen={setIsProfileOpen}
+              setShowProfile={setShowProfile}
+              setShowSettings={setShowSettings}
+            />
+          )}
           {/* Notifications panel */}
           {isNotificationOpen && <Notification isOpen={isOpen} />}
         </div>
@@ -225,6 +255,16 @@ export const DashboardLayout = () => {
           <Outlet />
         </div>
       </div>
+      {showProfile && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <Profile onClose={() => setShowProfile(false)} data={data} />
+        </div>
+      )}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <Settings onClose={() => setShowSettings(false)} />
+        </div>
+      )}
     </div>
   );
 };

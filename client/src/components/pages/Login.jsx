@@ -1,40 +1,114 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, LockKeyhole } from "lucide-react";
 import Tilt from "react-parallax-tilt";
-import { Link } from "react-router-dom";
+import { gql, useMutation } from "@apollo/client";
+import { Link, useNavigate } from "react-router-dom";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("theme") === "dark"
+  );
+
+  // Sync dark mode with document and localStorage
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
+  //prevent to access login page if already logged in
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, []);
+
+  const LOGIN = gql`
+    mutation Login($email: String!, $password: String!) {
+      login(email: $email, password: $password) {
+        _id
+        email
+        token
+      }
+    }
+  `;
+
+  const [login, { loading, error }] = useMutation(LOGIN);
+
+  const handleSubmit = async () => {
+    try {
+      const { data } = await login({ variables: { email, password } });
+      if (loading) {
+        return (
+          <div className="fixed inset-0 bg-white/20 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
+            <img src="logo1.gif" alt="Loading" className="w-30 h-30" />
+          </div>
+        );
+      }
+      localStorage.setItem("token", data.login.token);
+      localStorage.setItem("userId", data.login._id);
+      console.log("Stored userId:", data.login._id);
+
+      window.location.href = "/dashboard";
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
+  };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center bg-white">
+    <section className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800 relative">
+      <div className="absolute top-4 right-4 z-50">
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="text-xl text-[#103D46] dark:text-white"
+          title="Toggle Dark Mode"
+        >
+          🌓
+        </button>
+      </div>
+      <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center bg-white dark:bg-gray-900 ">
         <div className="md:w-1/2 p-5 md:px-12">
           <div className="flex flex-col gap-2 justify-center items-center">
             <img src="logo1.gif" alt="logo" className="w-15 h-15" />
-            <span className="font-bold text-2xl text-[#103D46] text-center">
+            <span className="font-bold text-2xl text-[#103D46] dark:text-white text-center">
               MyCampus
             </span>
           </div>
           <form action="" className="flex flex-col gap-2 mt-6">
             <div className="relative w-full">
-              <span className="absolute inset-y-0 left-2 top-5 flex items-center text-gray-500">
-                <Mail className="w-4 h-4 text-[#103D46]" />
+              <span className="absolute inset-y-0 left-2 top-5 flex items-center text-gray-500 dark:text-white">
+                <Mail className="w-4 h-4 text-[#103D46] dark:text-white" />
               </span>
               <input
                 className="pl-8 p-1 mt-5 w-full rounded-md text-sm border focus:border-black-500 outline-none"
                 type="email"
                 placeholder="Email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
             <div className="relative w-full">
-              <span className="absolute inset-y-0 left-2 top-2 flex items-center text-gray-500">
-                <LockKeyhole className="w-4 h-4 text-[#103D46]" />
+              <span className="absolute inset-y-0 left-2 top-2 flex items-center text-gray-500 dark:text-white">
+                <LockKeyhole className="w-4 h-4 text-[#103D46] dark:text-white" />
               </span>
               <input
                 className="p-1 mt-2 pl-8 rounded-md text-sm border w-full focus:border-black-500 outline-none"
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
+                value={password}
+                required
+                onChange={(e) => setPassword(e.target.value)}
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +117,7 @@ export default function Login() {
                 } absolute top-4 right-3 cursor-pointer`}
                 width="16"
                 height="16"
-                fill="black"
+                fill="grey"
                 viewBox="0 0 16 16"
                 onClick={() => setShowPassword(!showPassword)}
               >
@@ -61,31 +135,37 @@ export default function Login() {
                 )}
               </svg>
             </div>
-            <Link
-              to="/dashboard"
-              className="p-1 mt-2 rounded-md border border-none text-sm text-[#ffffff] text-center bg-[#103D46] hover:scale-105 duration-300"
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="py-2 mt-2 rounded-md border border-none text-sm text-[#ffffff] text-center bg-[#103D46] hover:scale-105 duration-300"
             >
-              <button>Login</button>
-            </Link>
+              Login
+            </button>
+            {error && (
+              <p className="text-red-500 text-sm mt-2">{error.message}</p>
+            )}
           </form>
 
-          <div className="mt-4 grid grid-cols-3 items-center text-gray-400">
+          <div className="mt-4 grid grid-cols-3 items-center text-gray-400 dark:text-white">
             <hr className="border-gray-400" />
-            <p className="text-center text-xs text-black">OR</p>
+            <p className="text-center text-xs text-black dark:text-white">OR</p>
             <hr className="border-gray-400" />
           </div>
 
-          <div className="mt-2 text-xs border-b border-[#103D46] py-4 text-[#103D46]">
+          <div className="mt-2 text-xs border-b border-[#103D46] dark:border-gray-400 py-4 text-[#103D46] dark:text-white">
             <a href="#">
-              <p className="text-[#103D46]">Forgot your password?</p>
+              <p className="text-[#103D46] dark:text-white">
+                Forgot your password?
+              </p>
             </a>
           </div>
 
-          <div className="mt-3 text-xs flex justify-between items-center text-[#103D46]">
+          <div className="mt-3 text-xs flex justify-between items-center text-[#103D46] dark:text-white">
             <p>Don't have an account?</p>
             <Link
               to="/signup"
-              className="py-1 px-4 bg-[#103D46] text-white text-xs text-center ml-2 rounded-md hover:scale-110"
+              className="py-2 px-6 bg-[#103D46] text-white text-xs text-center ml-2 rounded-md hover:scale-110"
             >
               <button>SignUp</button>
             </Link>

@@ -82,7 +82,7 @@ export const UploadNotes = (props) => {
   return (
     <>
       <div className="w-full max-w-3xl mx-auto z-20 shadow-md">
-        <div className="bg-white rounded-lg card-shadow p-6 md:p-8">
+        <div className="bg-white dark:bg-black/20 rounded-lg card-shadow p-6 md:p-8">
           <div className=" mb-8 flex justify-between">
             {/* Input field for the title of the notes */}
             <div>

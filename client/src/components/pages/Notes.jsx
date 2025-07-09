@@ -122,7 +122,7 @@ export const Notes = () => {
         <input
           type="text"
           placeholder="Search notes by subject name..."
-          className="pl-10 py-2 text-sm border border-gray-300 bg-white rounded-md w-full focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="pl-10 py-2 text-sm border border-gray-300 dark:border-black bg-white dark:bg-gray-900 rounded-md w-full focus:outline-none focus:ring-1 focus:ring-gray-500"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
         />
@@ -133,7 +133,7 @@ export const Notes = () => {
           [...notes].reverse().map((item) => (
             <Tilt
               key={item._id}
-              className="bg-white shadow-md border border-gray-100 rounded-md p-5 w-full relative flex flex-col z-10 h-full group"
+              className="bg-white dark:bg-black/20 shadow-md border dark:border-0 border-gray-100 rounded-md p-5 w-full relative flex flex-col z-10 h-full group"
               perspective={1000}
               tiltMaxAngleX={5}
               tiltMaxAngleY={5}
@@ -159,10 +159,10 @@ export const Notes = () => {
                     </div>
                   </div>
                   <div className="flex gap-3 text-xs">
-                    <span className="px-2 py-0.5 rounded-lg bg-purple-200">
+                    <span className="px-2 py-0.5 rounded-lg dark:text-black bg-purple-200">
                       {item.subject}
                     </span>
-                    <span className="bg-blue-200 px-2 py-0.5 rounded-lg">
+                    <span className="bg-blue-200 dark:text-black px-2 py-0.5 rounded-lg">
                       {item.semester}
                     </span>
                   </div>

@@ -57,13 +57,13 @@ export const CreateEvent = (props) => {
       setIsUploading(true);
 
       if (props.eventData?._id && props.updateEvent) {
-        // 🟡 Update mode
+        // Update
         await props.updateEvent({
           variables: { _id: props.eventData._id, input },
         });
         showAlert("Event updated successfully!", "success");
       } else {
-        // 🟢 Create mode
+        // Create
         await createEvent({ variables: { input } });
         showAlert("Event created successfully!", "success");
       }
@@ -87,7 +87,7 @@ export const CreateEvent = (props) => {
   return (
     <>
       <div className="w-full max-w-3xl mx-auto z-20 shadow-md">
-        <div className="bg-white rounded-lg card-shadow p-6 md:p-8">
+        <div className="bg-white dark:bg-black/20 rounded-lg card-shadow p-6 md:p-8">
           <div className=" mb-8 flex justify-between">
             <div>
               <h1 className="text-xl font-bold mb-2">

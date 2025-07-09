@@ -131,7 +131,7 @@ export const Paper = () => {
         <input
           type="text"
           placeholder="Search question paper by subject."
-          className="pl-10 py-2 text-sm border border-gray-300 bg-white rounded-md w-full focus:outline-none focus:ring-1 focus:ring-gray-500"
+          className="pl-10 py-2 text-sm border border-gray-300 dark:border-black bg-white dark:bg-gray-900 rounded-md w-full focus:outline-none focus:ring-1 focus:ring-gray-500"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
         />
@@ -142,7 +142,7 @@ export const Paper = () => {
           [...papers].reverse().map((item) => (
             <Tilt
               key={item.title}
-              className="bg-white group shadow-md border border-gray-100 rounded-md p-5 w-full relative flex flex-col z-10 h-full"
+              className="bg-white dark:bg-black/20 group shadow-md border dark:border-0 border-gray-100 rounded-md p-5 w-full relative flex flex-col z-10 h-full"
               perspective={1000}
               tiltMaxAngleX={5}
               tiltMaxAngleY={5}
@@ -168,13 +168,13 @@ export const Paper = () => {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 text-xs">
-                    <span className="px-2 py-0.5 rounded-lg bg-purple-200">
+                    <span className="px-2 py-0.5 rounded-lg dark:text-black bg-purple-200">
                       {item.subject}
                     </span>
-                    <span className="px-2 py-0.5 rounded-lg bg-blue-200">
+                    <span className="px-2 py-0.5 rounded-lg dark:text-black bg-blue-200">
                       {item.semester}
                     </span>
-                    <span className="px-2 py-0.5 rounded-lg bg-yellow-200">
+                    <span className="px-2 py-0.5 rounded-lg dark:text-black bg-yellow-200">
                       {item.examType}
                     </span>
                   </div>

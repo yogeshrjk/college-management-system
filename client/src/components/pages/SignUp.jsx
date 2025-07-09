@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { showAlert } from "../../utils/showAlert";
 import { gql, useMutation } from "@apollo/client";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Tilt from "react-parallax-tilt";
 
 const SIGNUP_MUTATION = gql`
@@ -50,12 +50,34 @@ export default function Register() {
     profilePic: "",
   });
 
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("theme") === "dark"
+  );
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const [signup] = useMutation(SIGNUP_MUTATION);
+  const [signup, { loading }] = useMutation(SIGNUP_MUTATION);
 
   // Handle form submit
   const handleSubmit = async (e) => {
@@ -82,8 +104,23 @@ export default function Register() {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center bg-white">
+    <section className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+      <div className="absolute top-4 right-4 z-50">
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="text-xl text-[#103D46] dark:text-white"
+          title="Toggle Dark Mode"
+        >
+          🌓
+        </button>
+      </div>
+      {loading && (
+        <div className="fixed inset-0 bg-white/20 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
+          <img src="logo1.gif" alt="Loading" className="w-30 h-30" />
+        </div>
+      )}
+
+      <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center bg-white dark:bg-gray-900">
         <Tilt
           className="md:block hidden w-1/2"
           perspective={500}
@@ -97,7 +134,7 @@ export default function Register() {
           <div className="w-full px-8">
             <div className="flex gap-2 justify-center items-center">
               <img src="logo1.gif" alt="logo" className="w-8 h-8" />
-              <span className="font-bold text-2xl text-[#103D46] text-center">
+              <span className="font-bold text-2xl text-[#103D46] dark:text-white text-center">
                 MyCampus
               </span>
             </div>
@@ -105,11 +142,11 @@ export default function Register() {
               {/* First Name & Last Name */}
               <div className="flex gap-4">
                 <div className="w-1/2">
-                  <label className="block text-sm font-semibold text-[#103D46]">
+                  <label className="block text-sm font-semibold text-[#103D46] dark:text-white">
                     First Name
                   </label>
                   <input
-                    className="p-1 rounded-sm text-sm border w-full text-gray-700"
+                    className="p-1 rounded-sm text-sm border w-full text-gray-700 dark:text-gray-100"
                     type="text"
                     placeholder="e.g. John"
                     required
@@ -118,11 +155,11 @@ export default function Register() {
                   />
                 </div>
                 <div className="w-1/2">
-                  <label className="block text-sm font-semibold text-[#103D46]">
+                  <label className="block text-sm font-semibold text-[#103D46] dark:text-white">
                     Last Name
                   </label>
                   <input
-                    className="p-1 rounded-sm text-sm border w-full text-gray-700"
+                    className="p-1 rounded-sm text-sm border w-full text-gray-700 dark:text-gray-100"
                     type="text"
                     placeholder="e.g. Doe"
                     required
@@ -135,11 +172,11 @@ export default function Register() {
               {/* Phone Number & Date of Birth */}
               <div className="flex gap-4">
                 <div className="w-1/2">
-                  <label className="block text-sm font-semibold text-[#103D46]">
+                  <label className="block text-sm font-semibold text-[#103D46] dark:text-white">
                     Phone Number
                   </label>
                   <input
-                    className="p-1 rounded-sm text-sm border w-full text-gray-700"
+                    className="p-1 rounded-sm text-sm border w-full text-gray-700 dark:text-gray-100"
                     type="tel"
                     placeholder="+91 9876543210"
                     required
@@ -148,11 +185,11 @@ export default function Register() {
                   />
                 </div>
                 <div className="w-1/2">
-                  <label className="block text-sm font-semibold text-[#103D46]">
+                  <label className="block text-sm font-semibold text-[#103D46] dark:text-white">
                     Date of Birth
                   </label>
                   <input
-                    className="p-1 rounded-sm text-sm border w-full text-gray-700"
+                    className="p-1 rounded-sm text-sm border w-full text-gray-700 dark:text-gray-100"
                     type="date"
                     required
                     name="dob"
@@ -164,11 +201,11 @@ export default function Register() {
               {/* Email & Gender (Email is wider than Gender) */}
               <div className="flex gap-4">
                 <div className="w-2/3">
-                  <label className="block text-sm font-semibold text-[#103D46]">
+                  <label className="block text-sm font-semibold text-[#103D46] dark:text-white">
                     Email
                   </label>
                   <input
-                    className="p-1 rounded-sm text-sm border w-full text-gray-700"
+                    className="p-1 rounded-sm text-sm border w-full text-gray-700 dark:text-gray-100"
                     type="email"
                     placeholder="example@email.com"
                     required
@@ -177,11 +214,11 @@ export default function Register() {
                   />
                 </div>
                 <div className="w-1/3">
-                  <label className="block text-sm font-semibold text-[#103D46]">
+                  <label className="block text-sm font-semibold text-[#103D46] dark:text-white">
                     Gender
                   </label>
                   <select
-                    className="p-1 rounded-sm text-sm border w-full text-gray-700"
+                    className="p-1 rounded-sm text-sm border w-full text-gray-700 dark:text-gray-100"
                     required
                     defaultValue=""
                     name="gender"
@@ -199,11 +236,11 @@ export default function Register() {
 
               {/* Password & Confirm Password */}
               <div className="relative">
-                <label className="block text-sm font-semibold text-[#103D46]">
+                <label className="block text-sm font-semibold text-[#103D46] dark:text-white">
                   Password
                 </label>
                 <input
-                  className="p-1 pr-10 rounded-sm text-sm border w-full text-gray-700"
+                  className="p-1 pr-10 rounded-sm text-sm border w-full text-gray-700 dark:text-gray-100"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter strong password"
                   required
@@ -218,7 +255,7 @@ export default function Register() {
                   } absolute top-7 right-3 cursor-pointer`}
                   width="16"
                   height="16"
-                  fill="black"
+                  fill="grey"
                   viewBox="0 0 16 16"
                   onClick={() => setShowPassword(!showPassword)}
                 >
@@ -239,11 +276,11 @@ export default function Register() {
 
               {/* Confirm Password Field */}
               <div className="relative">
-                <label className="block text-sm font-semibold text-[#103D46]">
+                <label className="block text-sm font-semibold text-[#103D46] dark:text-white">
                   Confirm Password
                 </label>
                 <input
-                  className="p-1 pr-10 rounded-sm text-sm border w-full text-gray-700"
+                  className="p-1 pr-10 rounded-sm text-sm border w-full text-gray-700 dark:text-gray-100"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Re-enter password"
                   required
@@ -258,7 +295,7 @@ export default function Register() {
                   } absolute top-7 right-3 cursor-pointer`}
                   width="16"
                   height="16"
-                  fill="black"
+                  fill="grey"
                   viewBox="0 0 16 16"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
@@ -279,11 +316,11 @@ export default function Register() {
 
               {/* Profile Picture Upload */}
               <div>
-                <label className="block text-sm font-semibold text-[#103D46]">
+                <label className="block text-sm font-semibold text-[#103D46] dark:text-white">
                   Profile Picture
                 </label>
                 <input
-                  className="p-1 mt-2 rounded-sm text-sm border w-full text-gray-700"
+                  className="p-1 mt-2 rounded-sm text-sm border w-full text-gray-700 dark:text-gray-100"
                   type="file"
                   name="profilePic"
                   onChange={(e) => setSelectedFile(e.target.files[0])}
@@ -292,18 +329,18 @@ export default function Register() {
 
               {/* Sign Up Button */}
               <button
-                className="p-1 mb-4 rounded-sm font-bold text-sm text-white bg-[#103D46] hover:scale-105 duration-300 w-full"
+                className="py-2 mb-4 rounded-sm font-bold text-sm text-white bg-[#103D46] hover:scale-105 duration-300 w-full"
                 type="submit"
               >
                 Sign Up
               </button>
             </form>
             {/* Login button */}
-            <div className="mt-3 text-xs flex justify-between items-center text-[#103D46]">
+            <div className="mt-3 text-xs flex justify-between items-center text-[#103D46] dark:text-white">
               <p className="text-sm">Already have an account?</p>
               <Link
                 to="/"
-                className="py-1 px-5 bg-[#103D46] text-white text-center border rounded-md hover:scale-110 "
+                className="py-2 px-6 bg-[#103D46] text-white text-xs text-center rounded-md hover:scale-110 "
               >
                 <button>Login</button>
               </Link>

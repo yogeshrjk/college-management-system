@@ -118,7 +118,7 @@ export const Notices = () => {
           [...notices].reverse().map((item) => (
             <Tilt
               key={item.title}
-              className={`bg-white group shadow-md border border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10 ${
+              className={`bg-white dark:bg-black/20 group shadow-md border dark:border-0 border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10 ${
                 item.isPinned ? "border-l-4 border-l-blue-500" : "border-0"
               }`}
               perspective={1000}
@@ -158,7 +158,7 @@ export const Notices = () => {
               </div>
               <div className="flex gap-3 text-xs">
                 <span
-                  className={`px-2 py-0.5 rounded-lg ${
+                  className={`px-2 py-0.5 dark:text-black rounded-lg ${
                     item.priority === "low"
                       ? "bg-green-200"
                       : item.priority === "medium"
@@ -168,7 +168,7 @@ export const Notices = () => {
                 >
                   {item.priority}
                 </span>
-                <span className="bg-blue-200 px-2 py-0.5 rounded-lg">
+                <span className="bg-blue-200 dark:text-black px-2 py-0.5 rounded-lg">
                   {item.category}
                 </span>
               </div>

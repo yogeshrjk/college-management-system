@@ -60,7 +60,7 @@ const notifications = [
 export const Notification = ({ isOpen }) => {
   return (
     <div
-      className={`flex flex-col w-full h-[65%] overflow-y-scroll scrollbar-hide sm:w-100 gap-4 absolute right-0 top-15 md:right-3 z-20 bg-white p-4 text-sm rounded-md shadow-2xl ${
+      className={`flex flex-col w-full h-[65%] overflow-y-scroll scrollbar-hide sm:w-100 gap-4 absolute right-0 top-15 md:right-3 z-20 bg-white dark:bg-black/20 backdrop-blur-md p-4 text-sm rounded-md shadow-2xl ${
         isOpen ? "hidden" : ""
       } md:${isOpen ? "flex" : ""}`}
     >

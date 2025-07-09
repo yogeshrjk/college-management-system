@@ -124,7 +124,7 @@ export const Events = () => {
           [...events].reverse().map((item) => (
             <Tilt
               key={item.title}
-              className="bg-white shadow-md border border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10 group"
+              className="bg-white dark:bg-black/20 shadow-md border dark:border-0 border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10 group"
               perspective={1000}
               tiltMaxAngleX={5}
               tiltMaxAngleY={5}
@@ -155,7 +155,7 @@ export const Events = () => {
 
               <div className="flex gap-3 text-xs">
                 <span
-                  className={`px-2 py-0.5 rounded-lg ${
+                  className={`px-2 py-0.5 rounded-lg dark:text-black ${
                     item.status === "completed"
                       ? "bg-green-200"
                       : item.status === "ongoing"
@@ -167,11 +167,11 @@ export const Events = () => {
                 >
                   {item.status}
                 </span>
-                <span className="bg-blue-200 px-2 py-0.5 rounded-lg">
+                <span className="bg-blue-200 dark:text-black px-2 py-0.5 rounded-lg">
                   {item.category}
                 </span>
               </div>
-              <p className="fluid-p text-gray-500 line-clamp-3 pr-2">
+              <p className="fluid-p text-gray-500  line-clamp-3 pr-2">
                 {item.description}
               </p>
               <div className="space-y-3 px-1 text-sm text-gray-500 mt-3">
