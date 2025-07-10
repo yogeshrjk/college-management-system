@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 import Tilt from "react-parallax-tilt";
 import { UploadPaper } from "../UploadPaper";
+import { useOutletContext } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { DeleteConfirmation } from "./ui/DeleteConfirmation";
 export const Paper = () => {
+  const { userRole } = useOutletContext();
   const [showPaperForm, setShowPaperForm] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState({
@@ -109,13 +111,15 @@ export const Paper = () => {
             Access previous year examination papers for better preparation
           </span>
         </div>
-        <div
-          className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900 cursor-pointer"
-          onClick={() => setShowPaperForm(true)}
-        >
-          <FileText className="text-white w-4 h-4" />
-          <span className="text-white text-sm">Upload Paper</span>
-        </div>
+        {userRole === "admin" && (
+          <div
+            className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900 cursor-pointer"
+            onClick={() => setShowPaperForm(true)}
+          >
+            <FileText className="text-white w-4 h-4" />
+            <span className="text-white text-sm">Upload Paper</span>
+          </div>
+        )}
       </div>
       {showPaperForm && (
         <UploadPaper
@@ -157,15 +161,17 @@ export const Paper = () => {
                 <div className="flex flex-col gap-2 flex-grow">
                   <div className="flex items-center justify-between">
                     <span className="fluid-h2">{item.title}</span>
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
-                      <Trash2
-                        className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
-                        onClick={() =>
-                          setDeleteConfirm({ show: true, paperId: item._id })
-                        }
-                      />
-                    </div>
+                    {userRole === "admin" && (
+                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
+                        <Trash2
+                          className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
+                          onClick={() =>
+                            setDeleteConfirm({ show: true, paperId: item._id })
+                          }
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-2 text-xs">
                     <span className="px-2 py-0.5 rounded-lg dark:text-black bg-purple-200">

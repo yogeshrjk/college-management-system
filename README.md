@@ -52,6 +52,13 @@
 
 ## 🧑‍💻 Getting Started
 
+### 🧪 Test Credentials
+
+You can use the following test credentials to log in:
+
+- **Email:** johndoe@gmail.com
+- **Password:** John@123
+
 ### Prerequisites
 
 - **Node.js** (v16 or higher)

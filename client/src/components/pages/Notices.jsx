@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import {
   ClipboardCheck,
   CalendarDays,
@@ -12,6 +13,7 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import { DeleteConfirmation } from "./ui/DeleteConfirmation";
 
 export const Notices = () => {
+  const { userRole } = useOutletContext();
   const [showNoticeForm, setShowNoticeForm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState({
     show: false,
@@ -93,16 +95,18 @@ export const Notices = () => {
             Important announcements and updates from the college administration
           </span>
         </div>
-        <div
-          className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
-          onClick={() => {
-            setShowNoticeForm(true);
-            setEditNoticeData(null);
-          }}
-        >
-          <ClipboardCheck className="text-white w-4 h-4" />
-          <span className="text-white text-sm">Create Notice</span>
-        </div>
+        {userRole === "admin" && (
+          <div
+            className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+            onClick={() => {
+              setShowNoticeForm(true);
+              setEditNoticeData(null);
+            }}
+          >
+            <ClipboardCheck className="text-white w-4 h-4" />
+            <span className="text-white text-sm">Create Notice</span>
+          </div>
+        )}
       </div>
       <div className={`${showNoticeForm ? "block" : "hidden"}`}>
         <CreateNotice
@@ -140,21 +144,23 @@ export const Notices = () => {
                     ""
                   )}
                 </div>
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <Pencil
-                    className="w-4 h-4 hover:scale-125 transition-shadow duration-200 "
-                    onClick={() => {
-                      setEditNoticeData(item);
-                      setShowNoticeForm(true);
-                    }}
-                  />
-                  <Trash2
-                    className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
-                    onClick={() =>
-                      setDeleteConfirm({ show: true, noticeId: item._id })
-                    }
-                  />
-                </div>
+                {userRole === "admin" && (
+                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <Pencil
+                      className="w-4 h-4 hover:scale-125 transition-shadow duration-200 "
+                      onClick={() => {
+                        setEditNoticeData(item);
+                        setShowNoticeForm(true);
+                      }}
+                    />
+                    <Trash2
+                      className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
+                      onClick={() =>
+                        setDeleteConfirm({ show: true, noticeId: item._id })
+                      }
+                    />
+                  </div>
+                )}
               </div>
               <div className="flex gap-3 text-xs">
                 <span

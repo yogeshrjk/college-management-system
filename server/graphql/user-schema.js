@@ -9,6 +9,7 @@ const userTypeDefs = `
     email: String!
     gender: String!
     profilePic: String
+    role: String
     token: String
   }
 type Mutation {

@@ -82,6 +82,7 @@ export const DashboardLayout = () => {
         dob
         email
         gender
+        role
       }
     }
   `;
@@ -252,16 +253,16 @@ export const DashboardLayout = () => {
         </div>
         {/* Main dashboard content */}
         <div className="overflow-y-auto h-screen">
-          <Outlet />
+          <Outlet context={{ userRole: data?.getUser?.role }} />
         </div>
       </div>
       {showProfile && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
           <Profile onClose={() => setShowProfile(false)} data={data} />
         </div>
       )}
       {showSettings && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
           <Settings onClose={() => setShowSettings(false)} />
         </div>
       )}

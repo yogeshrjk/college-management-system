@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import Tilt from "react-parallax-tilt";
 import {
@@ -12,7 +13,9 @@ import {
 } from "lucide-react";
 import { CreateEvent } from "../CreateEvent";
 import { DeleteConfirmation } from "./ui/DeleteConfirmation";
+
 export const Events = () => {
+  const { userRole } = useOutletContext();
   const [showEventForm, setShowEventForm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState({
     show: false,
@@ -99,16 +102,18 @@ export const Events = () => {
             Manage and view all college events and activities
           </span>
         </div>
-        <div
-          className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
-          onClick={() => {
-            setShowEventForm(true);
-            setEditEventData(null);
-          }}
-        >
-          <CalendarCheck className="text-white w-4 h-4" />
-          <span className="text-white text-sm">Create Event</span>
-        </div>
+        {userRole === "admin" && (
+          <div
+            className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+            onClick={() => {
+              setShowEventForm(true);
+              setEditEventData(null);
+            }}
+          >
+            <CalendarCheck className="text-white w-4 h-4" />
+            <span className="text-white text-sm">Create Event</span>
+          </div>
+        )}
       </div>
       <div className={`${showEventForm ? "block" : "hidden"}`}>
         <CreateEvent
@@ -118,6 +123,7 @@ export const Events = () => {
           updateEvent={updateEvent}
         />
       </div>
+
       {/* Event Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.isArray(events) &&
@@ -136,21 +142,23 @@ export const Events = () => {
             >
               <div className="flex items-center justify-between">
                 <span className="fluid-h2">{item.title}</span>
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <Pencil
-                    className="w-4 h-4 hover:scale-125 transition-shadow duration-200 "
-                    onClick={() => {
-                      setEditEventData(item);
-                      setShowEventForm(true);
-                    }}
-                  />
-                  <Trash2
-                    className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200 cursor-pointer"
-                    onClick={() =>
-                      setDeleteConfirm({ show: true, eventId: item._id })
-                    }
-                  />
-                </div>
+                {userRole === "admin" && (
+                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <Pencil
+                      className="w-4 h-4 hover:scale-125 transition-shadow duration-200 "
+                      onClick={() => {
+                        setEditEventData(item);
+                        setShowEventForm(true);
+                      }}
+                    />
+                    <Trash2
+                      className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200 cursor-pointer"
+                      onClick={() =>
+                        setDeleteConfirm({ show: true, eventId: item._id })
+                      }
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 text-xs">

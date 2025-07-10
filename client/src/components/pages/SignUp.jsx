@@ -54,16 +54,6 @@ export default function Register() {
     () => localStorage.getItem("theme") === "dark"
   );
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [darkMode]);
-
   const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -107,7 +97,17 @@ export default function Register() {
     <section className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
       <div className="absolute top-4 right-4 z-50">
         <button
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() => {
+            const newMode = !darkMode;
+            setDarkMode(newMode);
+            const theme = newMode ? "dark" : "light";
+            localStorage.setItem("theme", theme);
+            if (theme === "dark") {
+              document.documentElement.classList.add("dark");
+            } else {
+              document.documentElement.classList.remove("dark");
+            }
+          }}
           className="text-xl text-[#103D46] dark:text-white"
           title="Toggle Dark Mode"
         >

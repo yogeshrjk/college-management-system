@@ -1,11 +1,13 @@
 import { BookOpen, Pencil, Trash2, User, Download, Search } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 import Tilt from "react-parallax-tilt";
 import { UploadNotes } from "../UploadNotes";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { DeleteConfirmation } from "./ui/DeleteConfirmation";
 
 export const Notes = () => {
+  const { userRole } = useOutletContext();
   const [showNotesForm, setShowNotesForm] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState({
@@ -103,13 +105,15 @@ export const Notes = () => {
             Access study materials and lecture notes from all subjects
           </span>
         </div>
-        <div
-          className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
-          onClick={() => setShowNotesForm(true)}
-        >
-          <BookOpen className="text-white w-4 h-4" />
-          <span className="text-white text-sm">Upload Notes</span>
-        </div>
+        {userRole === "admin" && (
+          <div
+            className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
+            onClick={() => setShowNotesForm(true)}
+          >
+            <BookOpen className="text-white w-4 h-4" />
+            <span className="text-white text-sm">Upload Notes</span>
+          </div>
+        )}
       </div>
       <div className={`${showNotesForm ? "block" : "hidden"}`}>
         <UploadNotes setShowNotesForm={setShowNotesForm} refetch={refetch} />
@@ -148,15 +152,17 @@ export const Notes = () => {
                 <div className="flex flex-col gap-2 flex-grow">
                   <div className="flex items-center justify-between">
                     <span className="fluid-h2">{item.title}</span>
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
-                      <Trash2
-                        className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
-                        onClick={() =>
-                          setDeleteConfirm({ show: true, notesId: item._id })
-                        }
-                      />
-                    </div>
+                    {userRole === "admin" && (
+                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
+                        <Trash2
+                          className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
+                          onClick={() =>
+                            setDeleteConfirm({ show: true, notesId: item._id })
+                          }
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-3 text-xs">
                     <span className="px-2 py-0.5 rounded-lg dark:text-black bg-purple-200">

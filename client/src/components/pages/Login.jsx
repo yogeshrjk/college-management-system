@@ -9,7 +9,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem("theme") === "dark"
+    () => localStorage.getItem("theme") === "light"
   );
 
   // Sync dark mode with document and localStorage
@@ -68,7 +68,17 @@ export default function Login() {
     <section className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800 relative">
       <div className="absolute top-4 right-4 z-50">
         <button
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() => {
+            const newMode = !darkMode;
+            setDarkMode(newMode);
+            const theme = newMode ? "dark" : "light";
+            localStorage.setItem("theme", theme);
+            if (theme === "dark") {
+              document.documentElement.classList.add("dark");
+            } else {
+              document.documentElement.classList.remove("dark");
+            }
+          }}
           className="text-xl text-[#103D46] dark:text-white"
           title="Toggle Dark Mode"
         >
