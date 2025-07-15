@@ -47,28 +47,28 @@ const paperResolvers = {
 
     // Update Papers
 
-    updatePapers: async (_, { _id, input }) => {
-      const updatedPapers = await Paper.findByIdAndUpdate(
+    updatePaper: async (_, { _id, input }) => {
+      const updatedPaper = await Papers.findByIdAndUpdate(
         _id,
         { $set: input },
         { new: true }
       );
 
-      if (!updatedPapers) {
+      if (!updatedPaper) {
         throw new Error("Paper not found");
       }
 
       const { date, time } = getFormattedDateTime();
 
       await Activity.create({
-        message: `Paper updated: ${updatedPapers.title}`,
+        message: `Paper updated: ${updatedPaper.title}`,
         type: "Paper",
         action: "updated",
         date,
         time,
       });
 
-      return updatedPapers;
+      return updatedPaper;
     },
 
     //Delete Paper

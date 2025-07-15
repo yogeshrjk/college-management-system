@@ -13,6 +13,7 @@ import { UploadPaper } from "../UploadPaper";
 import { useOutletContext } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { DeleteConfirmation } from "./ui/DeleteConfirmation";
+
 export const Paper = () => {
   const { userRole } = useOutletContext();
   const [showPaperForm, setShowPaperForm] = useState(false);
@@ -21,6 +22,8 @@ export const Paper = () => {
     show: false,
     paperId: null,
   });
+
+  const [editPaperData, setEditPaperData] = useState(null);
 
   const GET_PAPER = gql`
     query GetPaper {
@@ -40,6 +43,22 @@ export const Paper = () => {
       }
     }
   `;
+
+  const UPDATE_PAPER = gql`
+    mutation UpdatePaper($_id: ID!, $input: paperInput!) {
+      updatePaper(_id: $_id, input: $input) {
+        _id
+        title
+        subject
+        semester
+        year
+        examType
+        duration
+        maxMarks
+      }
+    }
+  `;
+
   const SEARCH_PAPER = gql`
     query SearchPaper($keyword: String!) {
       searchPaper(keyword: $keyword) {
@@ -80,7 +99,12 @@ export const Paper = () => {
   const [deletePaper] = useMutation(DELETE_PAPER, {
     refetchQueries: [{ query: GET_PAPER }],
   });
+  const [updatePaper] = useMutation(UPDATE_PAPER, {
+    refetchQueries: [{ query: GET_PAPER }],
+  });
+
   useEffect(() => {}, [data]);
+
   const { data: searchData } = useQuery(SEARCH_PAPER, {
     variables: { keyword: searchKeyword },
     skip: searchKeyword.trim() === "",
@@ -116,7 +140,10 @@ export const Paper = () => {
         {userRole === "admin" && (
           <div
             className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900 cursor-pointer"
-            onClick={() => setShowPaperForm(true)}
+            onClick={() => {
+              setShowPaperForm(true);
+              setEditPaperData(null);
+            }}
           >
             <FileText className="text-white w-4 h-4" />
             <span className="text-white text-sm">Upload Paper</span>
@@ -127,6 +154,8 @@ export const Paper = () => {
         <UploadPaper
           setShowPaperForm={setShowPaperForm}
           refetchPapers={refetch}
+          updatePaper={updatePaper}
+          paperData={editPaperData}
         />
       )}
       {/* Search bar */}
@@ -165,7 +194,13 @@ export const Paper = () => {
                     <span className="fluid-h2">{item.title}</span>
                     {userRole === "admin" && (
                       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
+                        <Pencil
+                          className="w-4 h-4 hover:scale-125 transition-shadow duration-200 "
+                          onClick={() => {
+                            setEditPaperData(item);
+                            setShowPaperForm(true);
+                          }}
+                        />
                         <Trash2
                           className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
                           onClick={() =>

@@ -1,69 +1,121 @@
+import { useState, useEffect } from "react";
 import { gql, useMutation } from "@apollo/client";
+import { useLocation } from "react-router-dom";
 import { showAlert } from "../utils/showAlert";
 import { SquareX } from "lucide-react";
-import { useState } from "react";
 
 export const UploadPaper = (props) => {
+  const location = useLocation();
+  const [subject, setSubject] = useState(props.paperData?.subject || "");
+  const [semester, setSemester] = useState(props.paperData?.semester || "");
+  const [examType, setExamType] = useState(props.paperData?.examType || "");
+  const [duration, setDuration] = useState(props.paperData?.duration || "");
+
+  useEffect(() => {
+    if (location.state?.openPaperForm) {
+      props.setShowPaperForm(true);
+    }
+    if (props.paperData) {
+      setSubject(props.paperData.subject || "");
+      setSemester(props.paperData.semester || "");
+      setExamType(props.paperData.examType || "");
+      setDuration(props.paperData.duration || "");
+    }
+  }, [location.state, props.paperData]);
+
   const CREATE_PAPER = gql`
-    mutation CreatePapers($input: papersInput!) {
+    mutation CreatePapers($input: paperInput!) {
       createPapers(input: $input) {
         _id
       }
     }
   `;
 
+  const UPDATE_PAPER = gql`
+    mutation UpdatePaper($_id: ID!, $input: paperInput!) {
+      updatePaper(_id: $_id, input: $input) {
+        _id
+        title
+      }
+    }
+  `;
+
   const [createPaper] = useMutation(CREATE_PAPER);
+  const [runUpdatePaper] = useMutation(UPDATE_PAPER);
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
 
-    if (!file) {
+    if (!file && !props.paperData) {
       showAlert("Please select a file to upload.", "error");
       return;
     }
 
     try {
       setIsUploading(true);
-      const fileName = `${Date.now()}_${file.name}`;
-      const [baseUrl, sasToken] =
-        import.meta.env.VITE_AZURE_SAS_BASE_URL_PAPERS.split("?");
-      const sasUrl = `${baseUrl}/${fileName}?${sasToken}`;
 
-      await fetch(sasUrl, {
-        method: "PUT",
-        headers: {
-          "x-ms-blob-type": "BlockBlob",
-          "Content-Type": file.type,
-        },
-        body: file,
-      });
+      let fileUrl = props.paperData?.fileUrl || "";
+      let fileSize = props.paperData?.fileSize || "";
 
-      const fileUrl = sasUrl.split("?")[0];
+      if (file) {
+        const fileName = `${Date.now()}_${file.name}`;
+        const [baseUrl, sasToken] =
+          import.meta.env.VITE_AZURE_SAS_BASE_URL_PAPERS.split("?");
+        const sasUrl = `${baseUrl}/${fileName}?${sasToken}`;
 
-      await createPaper({
-        variables: {
-          input: {
-            title: form.title.value,
-            subject: form.subject.value,
-            semester: form.semester.value,
-            year: form.year.value,
-            examType: form.examType.value,
-            maxMarks: Number(form.maxMarks.value),
-            duration: form.duration.value,
-            fileUrl,
-            fileSize:
-              file.size < 1024 * 1024
-                ? `${(file.size / 1024).toFixed(2)} KB`
-                : `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+        await fetch(sasUrl, {
+          method: "PUT",
+          headers: {
+            "x-ms-blob-type": "BlockBlob",
+            "Content-Type": file.type,
           },
-        },
-      });
+          body: file,
+        });
+
+        fileUrl = sasUrl.split("?")[0];
+        fileSize =
+          file.size < 1024 * 1024
+            ? `${(file.size / 1024).toFixed(2)} KB`
+            : `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+      }
+      const input = {
+        title: form.title.value,
+        subject: form.subject.value,
+        semester: form.semester.value,
+        year: form.year.value,
+        examType: form.examType.value,
+        maxMarks: Number(form.maxMarks.value),
+        duration: form.duration.value,
+        fileUrl,
+        fileSize,
+      };
+      if (props.paperData?._id && props.updatePaper) {
+        //update
+        await props.updatePaper({
+          variables: { _id: props.paperData._id, input },
+        });
+        showAlert("Paper updated successfully!", "success");
+      } else {
+        //create
+        await createPaper({
+          variables: { input },
+        });
+        showAlert("Paper uploaded successfully!", "success");
+      }
+      if (props.paperData?._id) {
+        await runUpdatePaper({
+          variables: { _id: props.paperData._id, input },
+        });
+        showAlert("Paper updated successfully!", "success");
+      }
+
       if (props.refetchPapers) {
         props.refetchPapers();
       }
-      showAlert("Paper uploaded successfully!", "success");
+
       props.setShowPaperForm(false);
     } catch (err) {
       showAlert(
@@ -83,11 +135,15 @@ export const UploadPaper = (props) => {
       <div className="w-full max-w-3xl mx-auto z-20 shadow-md">
         <div className="bg-white dark:bg-black/20 rounded-lg card-shadow p-6 md:p-8">
           <div className=" mb-8 flex justify-between">
-            {/* Input field for the title of the notes */}
+            {/* Input field for the title of the paper */}
             <div>
-              <h1 className="text-xl font-bold mb-2">Upload Paper</h1>
+              <h1 className="text-xl font-bold mb-2">
+                {" "}
+                {props.paperData ? "Update" : "Upload"} Paper
+              </h1>
               <p className="text-sm text-gray-600">
-                Fill out the form below to Upload a Question Paper file
+                Fill out the form below to{" "}
+                {props.paperData ? "update" : "upload"} a Question Paper.
               </p>
             </div>
             <SquareX
@@ -107,6 +163,7 @@ export const UploadPaper = (props) => {
                 name="title"
                 placeholder=""
                 required
+                defaultValue={props.paperData?.title || ""}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
@@ -120,13 +177,14 @@ export const UploadPaper = (props) => {
                 id="year"
                 name="year"
                 required
+                defaultValue={props.paperData?.year || ""}
                 placeholder="e.g., 2023"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Dropdown to select the subject related to the notes */}
+              {/* Dropdown to select the subject related to the paper */}
               <div>
                 <label
                   htmlFor="subject"
@@ -137,6 +195,8 @@ export const UploadPaper = (props) => {
                 <select
                   id="subject"
                   name="subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
@@ -149,7 +209,7 @@ export const UploadPaper = (props) => {
                   <option value="Economics">Economics</option>
                 </select>
               </div>
-              {/* Dropdown to select the semester for which the notes are applicable */}
+              {/* Dropdown to select the semester for which the paper are applicable */}
               <div>
                 <label
                   htmlFor="semester"
@@ -160,6 +220,8 @@ export const UploadPaper = (props) => {
                 <select
                   id="semester"
                   name="semester"
+                  value={semester}
+                  onChange={(e) => setSemester(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
@@ -184,6 +246,8 @@ export const UploadPaper = (props) => {
                 <select
                   id="examType"
                   name="examType"
+                  value={examType}
+                  onChange={(e) => setExamType(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
@@ -206,6 +270,7 @@ export const UploadPaper = (props) => {
                   type="number"
                   id="maxMarks"
                   name="maxMarks"
+                  defaultValue={props.paperData?.maxMarks || ""}
                   placeholder="e.g., 100"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
@@ -213,7 +278,7 @@ export const UploadPaper = (props) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Input field for the duration of the notes */}
+              {/* Input field for the duration of the paper */}
               <div>
                 <label
                   htmlFor="duration"
@@ -224,6 +289,8 @@ export const UploadPaper = (props) => {
                 <select
                   id="duration"
                   name="duration"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
@@ -234,7 +301,7 @@ export const UploadPaper = (props) => {
                   <option value="3 hour">3 hour</option>
                 </select>
               </div>
-              {/* File input for uploading the notes document (PDF, DOC, DOCX) */}
+              {/* File input for uploading the paper document (PDF, DOC, DOCX) */}
               <div>
                 <label
                   htmlFor="file"
@@ -259,7 +326,7 @@ export const UploadPaper = (props) => {
                 disabled={isUploading}
                 className="px-6 py-2 bg-[#103d46] text-white rounded-md hover:bg-black transition duration-200"
               >
-                Upload Paper
+                {props.paperData ? "Update Paper" : "Upload Paper"}
               </button>
             </div>
           </form>

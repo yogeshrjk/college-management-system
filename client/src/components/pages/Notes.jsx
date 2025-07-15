@@ -1,7 +1,7 @@
-import { BookOpen, Pencil, Trash2, User, Download, Search } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
+import { BookOpen, Pencil, Trash2, User, Download, Search } from "lucide-react";
 import Tilt from "react-parallax-tilt";
+import { useOutletContext } from "react-router-dom";
 import { UploadNotes } from "../UploadNotes";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { DeleteConfirmation } from "./ui/DeleteConfirmation";
@@ -88,6 +88,7 @@ export const Notes = () => {
   const [updateNotes] = useMutation(UPDATE_NOTES, {
     refetchQueries: [{ query: GET_NOTES }],
   });
+
   useEffect(() => {}, [data]);
 
   const { data: searchData } = useQuery(SEARCH_NOTES, {

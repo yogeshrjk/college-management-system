@@ -95,8 +95,9 @@ export const UploadNotes = (props) => {
         await props.updateNotes({
           variables: { _id: props.notesData._id, input },
         });
-        showAlert("Event updated successfully!", "success");
+        showAlert("Notes updated successfully!", "success");
       } else {
+        //create
         await createNotes({
           variables: { input },
         });
@@ -137,8 +138,8 @@ export const UploadNotes = (props) => {
                 {props.notesData ? "Update Notes" : "Upload Notes"}
               </h1>
               <p className="text-sm text-gray-600">
-                Fill out the form below to{" "}
-                {props.notesData ? "update a" : "upload a"} note file
+                Fill out the form below to
+                {props.notesData ? "update" : "upload"} a note.
               </p>
             </div>
             <SquareX
