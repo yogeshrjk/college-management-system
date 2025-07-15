@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export const UploadPaper = (props) => {
   const CREATE_PAPER = gql`
-    mutation CreatePapers($input: CreatePapersInput!) {
+    mutation CreatePapers($input: papersInput!) {
       createPapers(input: $input) {
         _id
       }

@@ -4,8 +4,10 @@ const { getFormattedDateTime } = require("../utils/formatDateTime");
 
 const paperResolvers = {
   Query: {
+    // Get Papers
     getPaper: async () => await Papers.find(),
 
+    // Search Papers
     searchPaper: async (_, { keyword }) => {
       if (keyword.trim().length < 3) {
         return [];
@@ -18,6 +20,7 @@ const paperResolvers = {
   },
 
   Mutation: {
+    // Create Papers
     createPapers: async (_, { input }) => {
       const { date, time } = getFormattedDateTime();
       const { fileSize, fileUrl } = input;
@@ -42,6 +45,32 @@ const paperResolvers = {
       return newPaper;
     },
 
+    // Update Papers
+
+    updatePapers: async (_, { _id, input }) => {
+      const updatedPapers = await Paper.findByIdAndUpdate(
+        _id,
+        { $set: input },
+        { new: true }
+      );
+
+      if (!updatedPapers) {
+        throw new Error("Paper not found");
+      }
+
+      const { date, time } = getFormattedDateTime();
+
+      await Activity.create({
+        message: `Paper updated: ${updatedPapers.title}`,
+        type: "Paper",
+        action: "updated",
+        date,
+        time,
+      });
+
+      return updatedPapers;
+    },
+
     //Delete Paper
     deletePaper: async (_, { _id }) => {
       const deletedPaper = await Papers.findByIdAndDelete(_id);
@@ -62,7 +91,7 @@ const paperResolvers = {
       return deletedPaper;
     },
 
-    incrementDownloadCount: async (_, { _id }) => {
+    incrementPaperDownloadCount: async (_, { _id }) => {
       const paper = await Papers.findById(_id);
       if (!paper) {
         throw new Error("Paper not found");

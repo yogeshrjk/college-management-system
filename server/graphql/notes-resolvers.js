@@ -4,8 +4,10 @@ const { getFormattedDateTime } = require("../utils/formatDateTime");
 
 const notesResolvers = {
   Query: {
+    //Get Notes
     getNotes: async () => await Notes.find(),
 
+    //Search Notes
     searchNotes: async (_, { keyword }) => {
       if (keyword.trim().length < 3) {
         return [];
@@ -18,6 +20,7 @@ const notesResolvers = {
   },
 
   Mutation: {
+    //Create notes
     createNotes: async (_, { input }) => {
       const { fileSize, fileType, fileUrl } = input;
       if (!fileUrl) throw new Error("fileUrl is required");
@@ -42,6 +45,32 @@ const notesResolvers = {
 
       return newNotes;
     },
+
+    // Update Notes
+    updateNotes: async (_, { _id, input }) => {
+      const updatedNotes = await Notes.findByIdAndUpdate(
+        _id,
+        { $set: input },
+        { new: true }
+      );
+
+      if (!updatedNotes) {
+        throw new Error("Notes not found");
+      }
+
+      const { date, time } = getFormattedDateTime();
+
+      await Activity.create({
+        message: `Notes updated: ${updatedNotes.title}`,
+        type: "Notes",
+        action: "updated",
+        date,
+        time,
+      });
+
+      return updatedNotes;
+    },
+
     //Delete Notes
     deleteNotes: async (_, { _id }) => {
       const deletedNotes = await Notes.findByIdAndDelete(_id);
@@ -62,7 +91,7 @@ const notesResolvers = {
       return deletedNotes;
     },
 
-    incrementDownloadCount: async (_, { _id }) => {
+    incrementNotesDownloadCount: async (_, { _id }) => {
       const note = await Notes.findById(_id);
       if (!note) {
         throw new Error("Note not found");

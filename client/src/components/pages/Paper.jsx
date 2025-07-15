@@ -68,13 +68,15 @@ export const Paper = () => {
   `;
 
   const INCREMENT_DOWNLOAD = gql`
-    mutation IncrementDownloadCount($_id: ID!) {
-      incrementDownloadCount(_id: $_id)
+    mutation IncrementPaperDownloadCount($_id: ID!) {
+      incrementPaperDownloadCount(_id: $_id)
     }
   `;
 
   const { data, loading, error, refetch } = useQuery(GET_PAPER);
-  const [incrementDownload] = useMutation(INCREMENT_DOWNLOAD);
+  const [incrementDownload] = useMutation(INCREMENT_DOWNLOAD, {
+    refetchQueries: [{ query: GET_PAPER }],
+  });
   const [deletePaper] = useMutation(DELETE_PAPER, {
     refetchQueries: [{ query: GET_PAPER }],
   });
@@ -206,7 +208,7 @@ export const Paper = () => {
                   </div>
                   <div className="flex flex-col mt-4">
                     <span>Uploaded: {item.uploadDate}</span>
-                    <span>{item.downloads} downloads</span>
+                    <span>downloads: {item.downloads} </span>
                   </div>
                 </div>
 

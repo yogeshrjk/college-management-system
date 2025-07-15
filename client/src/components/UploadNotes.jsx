@@ -1,18 +1,43 @@
 import { gql, useMutation } from "@apollo/client";
+import { useLocation } from "react-router-dom";
 import { showAlert } from "../utils/showAlert";
 import { SquareX } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const UploadNotes = (props) => {
+  const location = useLocation();
+  const [subject, setSubject] = useState(props.notesData?.subject || "");
+  const [semester, setSemester] = useState(props.notesData?.semester || "");
+
+  useEffect(() => {
+    if (location.state?.openNotesForm) {
+      props.setShowNotesForm(true);
+    }
+    if (props.notesData) {
+      setSubject(props.notesData.subject || "");
+      setSemester(props.notesData.semester || "");
+    }
+  }, [location.state, props.notesData]);
+
   const CREATE_NOTES = gql`
-    mutation CreateNotes($input: CreateNotesInput!) {
+    mutation CreateNotes($input: notesInput!) {
       createNotes(input: $input) {
         _id
       }
     }
   `;
 
+  const UPDATE_NOTES = gql`
+    mutation UpdateNotes($_id: ID!, $input: notesInput!) {
+      updateNotes(_id: $_id, input: $input) {
+        _id
+        title
+      }
+    }
+  `;
+
   const [createNotes] = useMutation(CREATE_NOTES);
+  const [runUpdateNotes] = useMutation(UPDATE_NOTES);
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -20,51 +45,73 @@ export const UploadNotes = (props) => {
     e.preventDefault();
     const form = e.target;
 
-    if (!file) {
+    if (!file && !props.notesData) {
       showAlert("Please select a file to upload.", "error");
       return;
     }
 
     try {
       setIsUploading(true);
-      const fileName = `${Date.now()}_${file.name}`;
-      const [baseUrl, sasToken] =
-        import.meta.env.VITE_AZURE_SAS_BASE_URL_NOTES.split("?");
-      const sasUrl = `${baseUrl}/${fileName}?${sasToken}`;
+      let fileUrl = props.notesData?.fileUrl || "";
+      let fileType = props.notesData?.fileType || "";
+      let fileSize = props.notesData?.fileSize || "";
 
-      await fetch(sasUrl, {
-        method: "PUT",
-        headers: {
-          "x-ms-blob-type": "BlockBlob",
-          "Content-Type": file.type,
-        },
-        body: file,
-      });
+      if (file) {
+        const fileName = `${Date.now()}_${file.name}`;
+        const [baseUrl, sasToken] =
+          import.meta.env.VITE_AZURE_SAS_BASE_URL_NOTES.split("?");
+        const sasUrl = `${baseUrl}/${fileName}?${sasToken}`;
 
-      const fileUrl = sasUrl.split("?")[0];
-
-      await createNotes({
-        variables: {
-          input: {
-            title: form.title.value,
-            subject: form.subject.value,
-            semester: form.semester.value,
-            author: form.author.value,
-            description: form.description.value,
-            fileUrl,
-            fileType: file.name.split(".").pop().toLowerCase(),
-            fileSize:
-              file.size < 1024 * 1024
-                ? `${(file.size / 1024).toFixed(2)} KB`
-                : `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+        await fetch(sasUrl, {
+          method: "PUT",
+          headers: {
+            "x-ms-blob-type": "BlockBlob",
+            "Content-Type": file.type,
           },
-        },
-      });
+          body: file,
+        });
+
+        fileUrl = sasUrl.split("?")[0];
+        fileType = file.name.split(".").pop().toLowerCase();
+        fileSize =
+          file.size < 1024 * 1024
+            ? `${(file.size / 1024).toFixed(2)} KB`
+            : `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+      }
+
+      const input = {
+        title: form.title.value,
+        subject: form.subject.value,
+        semester: form.semester.value,
+        author: form.author.value,
+        description: form.description.value,
+        fileUrl,
+        fileType,
+        fileSize,
+      };
+
+      if (props.notesData?._id && props.updateNotes) {
+        // Update
+        await props.updateNotes({
+          variables: { _id: props.notesData._id, input },
+        });
+        showAlert("Event updated successfully!", "success");
+      } else {
+        await createNotes({
+          variables: { input },
+        });
+        showAlert("Notes uploaded successfully!", "success");
+      }
+      if (props.notesData?._id) {
+        await runUpdateNotes({
+          variables: { _id: props.notesData._id, input },
+        });
+        showAlert("Notes updated successfully!", "success");
+      }
       if (props.refetch) {
         props.refetch();
       }
 
-      showAlert("Notes uploaded successfully!", "success");
       props.setShowNotesForm(false);
     } catch (err) {
       showAlert(
@@ -86,9 +133,12 @@ export const UploadNotes = (props) => {
           <div className=" mb-8 flex justify-between">
             {/* Input field for the title of the notes */}
             <div>
-              <h1 className="text-xl font-bold mb-2">Upload Notes</h1>
+              <h1 className="text-xl font-bold mb-2">
+                {props.notesData ? "Update Notes" : "Upload Notes"}
+              </h1>
               <p className="text-sm text-gray-600">
-                Fill out the form below to Upload a notes file
+                Fill out the form below to{" "}
+                {props.notesData ? "update a" : "upload a"} note file
               </p>
             </div>
             <SquareX
@@ -108,6 +158,7 @@ export const UploadNotes = (props) => {
                 name="title"
                 placeholder=""
                 required
+                defaultValue={props.notesData?.title || ""}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
@@ -124,6 +175,7 @@ export const UploadNotes = (props) => {
                 name="description"
                 rows="4"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                defaultValue={props.notesData?.description || ""}
                 placeholder=""
               ></textarea>
             </div>
@@ -140,6 +192,8 @@ export const UploadNotes = (props) => {
                 <select
                   id="subject"
                   name="subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
@@ -163,6 +217,8 @@ export const UploadNotes = (props) => {
                 <select
                   id="semester"
                   name="semester"
+                  value={semester}
+                  onChange={(e) => setSemester(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="" disabled>
@@ -189,6 +245,7 @@ export const UploadNotes = (props) => {
                   type="text"
                   id="author"
                   name="author"
+                  defaultValue={props.notesData?.author || ""}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
@@ -217,7 +274,7 @@ export const UploadNotes = (props) => {
                 disabled={isUploading}
                 className="px-6 py-2 bg-[#103d46] text-white rounded-md hover:bg-black transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Upload Notes
+                {props.notesData ? "Update Notes" : "Upload Notes"}
               </button>
             </div>
           </form>

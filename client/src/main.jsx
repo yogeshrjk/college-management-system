@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-import { createUploadLink } from "apollo-upload-client"; // ✅ important
+import { createUploadLink } from "apollo-upload-client";
 import "./index.css";
 import App from "./App.jsx";
 
@@ -15,7 +15,7 @@ if (theme === "dark") {
 
 const client = new ApolloClient({
   link: createUploadLink({
-    uri: `${import.meta.env.VITE_API_BASE_URL}/graphql`, // ✅ upload-ready
+    uri: `${import.meta.env.VITE_API_BASE_URL}/graphql`,
   }),
   cache: new InMemoryCache(),
 });

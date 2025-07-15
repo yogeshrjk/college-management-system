@@ -2,6 +2,8 @@
 
 **MyCampus** is a full-stack college management system designed to streamline student registration, authentication, and profile management. Built with modern web technologies, it offers a responsive, user-friendly interface to simplify academic operations.
 
+🌐 **Live Demo:** [https://www.my-campus.live](https://www.my-campus.live)
+
 ![MyCampus Demo](https://res.cloudinary.com/dhwpprvsb/image/upload/v1751170569/Screenshot_2025-06-29_at_9.21.32_AM_pkuglf.png)
 
 [![GitHub stars](https://img.shields.io/github/stars/yogeshrjk/college-management-system)](https://github.com/yogeshrjk/college-management-system/stargazers)
@@ -17,6 +19,7 @@
 - 🎨 **Modern UI**: Clean, responsive design with Tailwind CSS and Lucide Icons.
 - 📱 **Fully Responsive**: Optimized for desktop and mobile devices.
 - 📊 **Profile Management**: Easy-to-use student profile system.
+- 🤖 **AI Ask Feature**: Integrated chatbot powered by Groq API (LLaMA 3.1) to assist students with academic and general questions.
 
 ---
 
@@ -47,6 +50,20 @@
 | Homepage                                                                                                              | Student Dashboard                                                                                                          |
 | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | ![Page](https://res.cloudinary.com/dhwpprvsb/image/upload/v1751170569/Screenshot_2025-06-29_at_9.22.28_AM_dntgfo.png) | ![Dashboard](https://res.cloudinary.com/dhwpprvsb/image/upload/v1751170569/Screenshot_2025-06-29_at_9.22.35_AM_ug5z5x.png) |
+
+---
+
+## 🧠 AI Ask – Chat with Campus Bot
+
+A conversational AI assistant built using **Groq API** and **LLaMA 3.1** model.
+
+### 🔍 Capabilities
+
+- Answer academic questions and general doubts
+- Friendly chat-style UI
+- Message history saved in session
+
+You can access this feature on the `/askai` route.
 
 ---
 

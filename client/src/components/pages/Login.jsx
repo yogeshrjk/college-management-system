@@ -8,10 +8,10 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  //dark theme
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") === "light"
   );
-
   // Sync dark mode with document and localStorage
   useEffect(() => {
     if (darkMode) {
@@ -23,7 +23,7 @@ export default function Login() {
     }
   }, [darkMode]);
 
-  //prevent to access login page if already logged in
+  //prevent accessing login page if already logged in
   const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -56,8 +56,6 @@ export default function Login() {
       }
       localStorage.setItem("token", data.login.token);
       localStorage.setItem("userId", data.login._id);
-      console.log("Stored userId:", data.login._id);
-
       window.location.href = "/dashboard";
     } catch (err) {
       console.error("Login failed:", err);

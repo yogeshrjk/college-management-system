@@ -14,7 +14,7 @@ const paperTypeDefs = `
     fileUrl: String
   }
 
-  input CreatePapersInput {
+  input papersInput {
     title: String!
     subject: String!
     semester: String!
@@ -29,8 +29,9 @@ const paperTypeDefs = `
   }
 
   type Mutation {
-    createPapers(input: CreatePapersInput!): Paper
-    incrementDownloadCount(_id: ID!): String
+    createPapers(input: papersInput!): Paper
+    incrementPaperDownloadCount(_id: ID!): String
+    updatePapers(_id: ID!, input: papersInput!): Paper
     deletePaper(_id: ID!): Paper
   }
 
