@@ -29,12 +29,14 @@ const Settings = ({ onClose }) => {
 
   return (
     <div>
-      <div className="fixed inset-0 z-50 m-auto bg-white dark:bg-black/10 backdrop-blur-sm dark:text-white shadow-md md:rounded-lg p-8 flex flex-col gap-2 w-full max-w-md sm:h-fit">
-        <div className="flex justify-end">
-          <SquareX className="w-6 h-6 hover:text-red-500" onClick={onClose} />
-        </div>
-        <div className="text-xl font-semibold mb-4">{defaultTexts.title}</div>
+      <div className="fixed inset-0 z-50 m-auto bg-white dark:bg-black/10 backdrop-blur-sm dark:text-white shadow-md md:rounded-lg p-6 flex flex-col gap-2 w-full max-w-md sm:h-fit">
+        <div className="flex items-center justify-between mb-5">
+          <div className="text-xl font-semibold mb-4">{defaultTexts.title}</div>
 
+          <div>
+            <SquareX className="w-6 h-6 hover:text-red-500" onClick={onClose} />
+          </div>
+        </div>
         <div className="flex-1 space-y-3">
           <ToggleField
             label={defaultTexts.darkMode}

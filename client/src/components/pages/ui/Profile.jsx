@@ -1,53 +1,75 @@
 import { useState } from "react";
 import { showAlert } from "../../../utils/showAlert";
 import { SquareX, Pencil } from "lucide-react";
+import { gql, useMutation } from "@apollo/client";
+
 export default function Profile(props) {
   const [email, setEmail] = useState(props.data.getUser.email || "");
   const [dob, setDob] = useState(props.data.getUser.dob || "");
   const [phone, setPhone] = useState(props.data.getUser.phoneNumber || "");
   const [gender, setGender] = useState(props.data.getUser.gender || "");
 
+  const UPDATE_USER = gql`
+    mutation UpdateUser(
+      $_id: ID!
+      $email: String
+      $dob: String
+      $phoneNumber: String
+      $gender: String
+    ) {
+      updateUser(
+        _id: $_id
+        email: $email
+        dob: $dob
+        phoneNumber: $phoneNumber
+        gender: $gender
+      ) {
+        _id
+        email
+        dob
+        phoneNumber
+        gender
+      }
+    }
+  `;
+
+  const [updateUser] = useMutation(UPDATE_USER);
+
   const handleUpdate = async () => {
     try {
-      const mutation = `
-        mutation UpdateUser($id: ID!, $email: String, $dob: String, $phoneNumber: String, $gender: String) {
-          updateUser(id: $id, email: $email, dob: $dob, phoneNumber: $phoneNumber, gender: $gender) {
-            id
-            email
-            dob
-            phoneNumber
-            gender
-          }
-        }
-      `;
+      const user = props.data?.getUser;
+      console.log("USER DATA:", props.data?.getUser);
+
+      if (!user || !user._id) {
+        showAlert("User ID is missing. Cannot update profile.", "error");
+        return;
+      }
 
       const variables = {
-        id: props.data.getUser.id,
+        _id: user._id,
         email,
         dob,
         phoneNumber: phone,
         gender,
       };
 
-      const res = await fetch("/graphql", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: mutation, variables }),
-      });
+      const { data } = await updateUser({ variables });
 
-      const result = await res.json();
-      if (result.data && result.data.updateUser) {
+      if (data && data.updateUser) {
         showAlert("Profile updated successfully!", "success");
-        console.log("Update result:", result);
+        console.log("Update result:", data.updateUser);
       } else {
         showAlert("Failed to update profile.", "error");
-        console.error("Update error:", result.errors);
       }
     } catch (err) {
       console.error("Update error:", err);
+      showAlert("Error updating profile.", "error");
     }
   };
-
+  if (!props.data || !props.data.getUser) {
+    return <div>Loading profile...</div>;
+  }
+  // const userInfo = props.data?.getUser;
   return (
     <div className="fixed inset-0 z-50 m-auto bg-white dark:bg-black/20 backdrop-blur-sm shadow-md md:rounded-lg p-8 flex flex-col gap-2 w-full max-w-md sm:h-fit">
       <div className="flex justify-end">
@@ -80,7 +102,10 @@ export default function Profile(props) {
         <EditableField label="Phone Number" value={phone} onChange={setPhone} />
         <EditableField label="Gender" value={gender} onChange={setGender} />
         <div>
-          <button className="text-blue-600 hover:underline text-sm">
+          <button
+            className="bg-[#103d46] w-full text-white text-sm px-4 py-2 rounded-md hover:bg-[#0b2e36]"
+            onClick={props.onChangePassword}
+          >
             Change Password
           </button>
         </div>

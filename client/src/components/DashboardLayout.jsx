@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { ProfileDropdown } from "./ProfileDropdown";
 import { Notification } from "./Notification";
+import { ChangePass } from "./pages/ui/ChangePass";
 
 const navigationItems = [
   {
@@ -64,7 +65,7 @@ export const DashboardLayout = () => {
   const [profilePicUrl, setProfilePicUrl] = useState(""); //setting profile pic
   const [showProfile, setShowProfile] = useState(false); //full profile setting
   const [showSettings, setShowSettings] = useState(false);
-
+  const [showChangePass, setShowChangePass] = useState(false);
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -73,8 +74,9 @@ export const DashboardLayout = () => {
   }, []);
 
   const GET_USER = gql`
-    query GetUser($id: ID!) {
-      getUser(id: $id) {
+    query GetUser($_id: ID!) {
+      getUser(_id: $_id) {
+        _id
         profilePic
         firstName
         lastName
@@ -87,7 +89,7 @@ export const DashboardLayout = () => {
     }
   `;
   const { data, loading, error } = useQuery(GET_USER, {
-    variables: { id: localStorage.getItem("userId") },
+    variables: { _id: localStorage.getItem("userId") },
   });
 
   useEffect(() => {
@@ -101,7 +103,7 @@ export const DashboardLayout = () => {
     console.error("Failed to load user info", error);
     return null;
   }
-
+  const userData = data?.getUser;
   return (
     <div
       className="h-screen flex bg-gray-100 dark:bg-gray-800 select-none"
@@ -175,11 +177,11 @@ export const DashboardLayout = () => {
             ))}
           </div>
         ) : (
-          <span className="text-sm text-gray-400 p-4 mb-5">
-            All In One Place
-            <br />
-            Schedule Smarter, Study Smarter
-          </span>
+          <div className="text-sm text-gray-400 p-4 mb-5">
+            <span className="block h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+            This project is currently under development — some pages may contain
+            hardcoded data, and additional features will be added soon.
+          </div>
         )}
       </div>
 
@@ -246,6 +248,7 @@ export const DashboardLayout = () => {
               setIsProfileOpen={setIsProfileOpen}
               setShowProfile={setShowProfile}
               setShowSettings={setShowSettings}
+              user={userData}
             />
           )}
           {/* Notifications panel */}
@@ -258,7 +261,23 @@ export const DashboardLayout = () => {
       </div>
       {showProfile && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
-          <Profile onClose={() => setShowProfile(false)} data={data} />
+          <Profile
+            onClose={() => setShowProfile(false)}
+            data={data}
+            onChangePassword={() => {
+              setShowProfile(false);
+              setShowChangePass(true);
+            }}
+          />
+        </div>
+      )}
+      {showChangePass && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
+          <ChangePass
+            data={data}
+            setShowChangePass={setShowChangePass}
+            onClose={() => setShowChangePass(false)}
+          />
         </div>
       )}
       {showSettings && (
@@ -269,3 +288,5 @@ export const DashboardLayout = () => {
     </div>
   );
 };
+
+// hover:bg-[#0b2e36]
