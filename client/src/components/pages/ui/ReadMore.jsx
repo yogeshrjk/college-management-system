@@ -10,10 +10,9 @@ export const ReadMore = (props) => {
         key={item.id}
         className="bg-white py-5 dark:bg-black/20 group shadow-md border md:w-[50%] border-gray-100 dark:border-gray-800 rounded-md p-4 relative flex flex-col gap-2 z-10 overflow-y-scoll h-full sm:h-fit"
       >
-        {/* Top Section */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <span className="text-md md:text-xl">{item.title}</span>
+            <span className="text-md md:text-xl font-bold">{item.title}</span>
           </div>
           <div>
             <SquareX
