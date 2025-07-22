@@ -8,7 +8,7 @@ export const View = (props) => {
     <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50">
       <div
         key={item.id}
-        className="bg-white dark:bg-black/40 shadow-md border dark:border-0 md:w-[50%] border-gray-100 rounded-md p-4 relative flex flex-col gap-2 z-10 group h-full sm:h-fit"
+        className="bg-white/20 dark:bg-black/40 shadow-md border dark:border-0 md:w-[50%] border-gray-100 rounded-md p-4 relative flex flex-col gap-2 z-10 group h-full sm:h-fit"
       >
         <div className="flex items-center justify-between">
           <span className="text-md md:text-xl font-bold">{item.title}</span>
@@ -56,7 +56,7 @@ export const View = (props) => {
             Total Attendees: {item.attendees}
           </div>
         </div>
-        <p className="text-sm md:text-lg mt-2 text-gray-500 whitespace-pre-line">
+        <p className="text-sm md:text-lg mt-2 text-gray-800 dark:text-white whitespace-pre-line">
           {item.description}
         </p>
       </div>

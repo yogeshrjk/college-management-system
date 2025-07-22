@@ -8,7 +8,7 @@ export const ReadMore = (props) => {
     <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50">
       <div
         key={item.id}
-        className="bg-white py-5 dark:bg-black/20 group shadow-md border md:w-[50%] border-gray-100 dark:border-gray-800 rounded-md p-4 relative flex flex-col gap-2 z-10 overflow-y-scoll h-full sm:h-fit"
+        className="bg-white/20 py-5 dark:bg-black/20 group shadow-md border md:w-[50%] border-gray-100 dark:border-gray-800 rounded-md p-4 relative flex flex-col gap-2 z-10 overflow-y-scoll h-full sm:h-fit"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
@@ -37,18 +37,17 @@ export const ReadMore = (props) => {
             {item.category}
           </span>
         </div>
-        <div className="mt-auto">
-          {/* Metadata Section */}
-          <div className="flex gap-6 text-sm text-gray-500 mt-3">
-            <div className="flex justify-center items-center gap-2 ">
-              <CalendarDays className="w-4 h-4" /> {item.date}
-            </div>
-            <div>
-              <span className="w-4 h-4">By {item.author}</span>
-            </div>
+        {/* Metadata Section */}
+        <div className="flex gap-6 text-sm text-gray-500 mt-3">
+          <div className="flex justify-center items-center gap-2 ">
+            <CalendarDays className="w-4 h-4" /> {item.date}
+          </div>
+          <div>
+            <span className="w-4 h-4">By {item.author}</span>
           </div>
         </div>
-        <p className="text-sm md:text-lg mt-2 text-gray-500 whitespace-pre-line">
+
+        <p className="text-sm md:text-lg mt-2 text-gray-800 dark:text-white whitespace-pre-line">
           {item.content}
         </p>
       </div>
