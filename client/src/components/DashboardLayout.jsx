@@ -68,7 +68,29 @@ export const DashboardLayout = () => {
   const [showChangePass, setShowChangePass] = useState(false);
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
     if (!token) {
+      localStorage.removeItem("userId");
+      window.location.href = "/";
+      return;
+    }
+
+    // Decode JWT and check expiry
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const now = Date.now() / 1000;
+
+      if (payload.exp < now) {
+        console.warn("JWT token expired");
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        window.location.href = "/";
+      }
+    } catch (e) {
+      console.error("Invalid token format", e);
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
       window.location.href = "/";
     }
   }, []);
