@@ -30,15 +30,24 @@ type Mutation {
   ):User!
 
   updateUser(
-    phoneNumber: String!
-    dob: String!
-    email: String!
-    gender: String!
-    password: String!
-    profilePic: Upload):User!
+    _id:ID!
+    phoneNumber: String
+    dob: String
+    email: String
+    gender: String
+    password: String
+    profilePic: Upload
+    ):User!
+
+  changePassword(
+    _id: ID!
+    oldPassword: String!
+    newPassword: String!
+  ): Boolean
 }
+
   type Query {
-    getUser(id: ID!): User
+    getUser(_id: ID!): User
   }
 `;
 

@@ -1,0 +1,21 @@
+name: Keep Render Awake
+
+on:
+  schedule:
+    - cron: "*/13 * * * *" # every 13 minutes
+  workflow_dispatch: # allows manual trigger
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render app
+        env:
+          URL: ${{ secrets.PING_URL }}
+        run: |
+          if [ -z "$URL" ]; then
+            echo "Missing PING_URL secret"; exit 1
+          fi
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+          echo "Pinged $URL → Status $STATUS"
+          exit 0

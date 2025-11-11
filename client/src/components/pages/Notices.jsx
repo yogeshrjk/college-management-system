@@ -11,11 +11,15 @@ import Tilt from "react-parallax-tilt";
 import { CreateNotice } from "../CreateNotice";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { DeleteConfirmation } from "./ui/DeleteConfirmation";
-
+import { ReadMore } from "./ui/ReadMore";
 export const Notices = () => {
   const { userRole } = useOutletContext();
   const [showNoticeForm, setShowNoticeForm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    noticeId: null,
+  });
+  const [showReadMore, setShowReadMore] = useState({
     show: false,
     noticeId: null,
   });
@@ -122,8 +126,10 @@ export const Notices = () => {
           [...notices].reverse().map((item) => (
             <Tilt
               key={item.title}
-              className={`bg-white dark:bg-black/20 group shadow-md border dark:border-0 border-gray-100 rounded-md p-4 w-full relative flex flex-col gap-2 z-10 ${
-                item.isPinned ? "border-l-4 border-l-blue-500" : "border-0"
+              className={`bg-white dark:bg-black/20 group shadow-md border border-gray-100 dark:border-gray-800 rounded-md p-4 w-full relative flex flex-col gap-2 z-10 ${
+                item.isPinned
+                  ? "border-l-4 border-l-blue-500 dark:border-l-blue-500"
+                  : ""
               }`}
               perspective={1000}
               tiltMaxAngleX={5}
@@ -192,7 +198,12 @@ export const Notices = () => {
                   </div>
                 </div>
                 {/* Button Section */}
-                <button className="w-full text-sm font-bold py-2 bg-[#103d46] text-white p-1 rounded-md hover:bg-black cursor-pointer">
+                <button
+                  className="w-full text-sm font-bold py-2 bg-[#103d46] text-white p-1 rounded-md hover:bg-black cursor-pointer"
+                  onClick={() =>
+                    setShowReadMore({ show: true, noticeId: item._id })
+                  }
+                >
                   Read More
                 </button>
               </div>
@@ -206,6 +217,13 @@ export const Notices = () => {
             setDeleteConfirm({ show: false, noticeId: null });
           }}
           onCancel={() => setDeleteConfirm({ show: false, noticeId: null })}
+        />
+      )}
+      {showReadMore.show && (
+        <ReadMore
+          itemId={showReadMore.noticeId}
+          getNotice={(id) => notices.find((n) => n._id === id)}
+          onClose={() => setShowReadMore({ show: false, noticeId: null })}
         />
       )}
     </div>

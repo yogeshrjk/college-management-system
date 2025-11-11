@@ -6,14 +6,14 @@ const notesTypeDef = `
     semester: String!
     author: String!
     uploadDate: String
-    downloads: Int
+    downloads: String
     description: String
     fileType: String
     fileSize: String
     fileUrl: String
   }
 
-  input CreateNotesInput {
+  input notesInput {
     title: String!
     subject: String!
     semester: String!
@@ -22,11 +22,13 @@ const notesTypeDef = `
     fileType: String
     fileSize: String
     fileUrl: String
+    downloads: String
   }
 
   type Mutation {
-    createNotes(input: CreateNotesInput!): Notes
-    incrementDownloadCount(_id: ID!): String
+    createNotes(input: notesInput!): Notes
+    incrementNotesDownloadCount(_id: ID!): String
+    updateNotes(_id: ID!, input: notesInput!): Notes
     deleteNotes(_id: ID!): Notes
   }
 

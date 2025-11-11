@@ -10,8 +10,11 @@ import {
 import Tilt from "react-parallax-tilt";
 import { gql, useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 
 export const Dashboard = () => {
+  const { userRole } = useOutletContext();
+
   const GET_ACTIVITIES = gql`
     query GetActivities {
       getActivities {
@@ -44,7 +47,7 @@ export const Dashboard = () => {
     {
       title: "Attendance",
       value: "56",
-      description: "Maintain your attendance, it should be >75",
+      description: "Maintain your attendance.",
       icon: UserCheck,
       color: "text-blue-600",
     },
@@ -129,31 +132,56 @@ export const Dashboard = () => {
             <span className="fluid-h2">Quick Actions</span>
             <p className="text-gray-500 fluid-p">Frequently used features</p>
           </div>
-          <div className="grid gap-3 mt-4">
-            <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent">
-              <Users className="h-4 w-4" />
-              <span className="text-sm">Add New Student</span>
-            </button>
-            <Link to="/events" state={{ openEventForm: true }}>
+          {userRole === "admin" && (
+            <div className="grid gap-3 mt-4">
               <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent">
-                <Calendar className="h-4 w-4" />
-                <span className="text-sm">Schedule Event</span>
+                <Users className="h-4 w-4" />
+                <span className="text-sm">Add New Student</span>
               </button>
-            </Link>
-            <Link to="/notices" state={{ openNoticeForm: true }}>
-              <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent">
-                <BookOpen className="h-4 w-4" />
-                <span className="text-sm">Create Notice</span>
+              <Link to="/events" state={{ openEventForm: true }}>
+                <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent">
+                  <Calendar className="h-4 w-4" />
+                  <span className="text-sm">Schedule Event</span>
+                </button>
+              </Link>
+              <Link to="/notices" state={{ openNoticeForm: true }}>
+                <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent">
+                  <BookOpen className="h-4 w-4" />
+                  <span className="text-sm">Create Notice</span>
+                </button>
+              </Link>
+              <button
+                className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent"
+                data-capture-trigger="extended"
+              >
+                <Bug className="h-4 w-4" />
+                <span className="text-sm">Report a Bug</span>
               </button>
-            </Link>
-            <button
-              className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent"
-              data-capture-trigger="extended"
-            >
-              <Bug className="h-4 w-4" />
-              <span className="text-sm">Report a Bug</span>
-            </button>
-          </div>
+            </div>
+          )}
+          {userRole === "user" && (
+            <div className="grid gap-3 mt-4">
+              <Link to="/events">
+                <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent">
+                  <Calendar className="h-4 w-4" />
+                  <span className="text-sm">View Events</span>
+                </button>
+              </Link>
+              <Link to="/notices">
+                <button className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent">
+                  <BookOpen className="h-4 w-4" />
+                  <span className="text-sm">View Notices</span>
+                </button>
+              </Link>
+              <button
+                className="w-full flex items-center justify-start space-x-2 rounded-md bg-black/20/5 p-3 hover:bg-black/10 hover:dark:bg-white/10 text-left hover:bg-accent"
+                data-capture-trigger="extended"
+              >
+                <Bug className="h-4 w-4" />
+                <span className="text-sm">Report a Bug</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

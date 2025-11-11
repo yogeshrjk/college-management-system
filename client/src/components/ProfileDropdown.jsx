@@ -1,35 +1,8 @@
-import { gql, useQuery } from "@apollo/client";
 import { User, LogOut, Settings } from "lucide-react";
 
 export const ProfileDropdown = (props) => {
-  const GET_USER = gql`
-    query GetUser($id: ID!) {
-      getUser(id: $id) {
-        firstName
-        lastName
-        email
-      }
-    }
-  `;
-
-  const userId = localStorage.getItem("userId");
-  console.log("Retrieved userId in dropdown:", userId);
-  if (!userId) {
-    console.error("No user ID found in localStorage.");
-    return null;
-  }
-  const { data, loading, error } = useQuery(GET_USER, {
-    variables: { id: userId },
-  });
-
-  if (loading) return null;
-  if (error) {
-    console.error("Failed to load user info", error);
-    return null;
-  }
-
-  const userInfo = data?.getUser;
-
+  const userInfo = props.user;
+  if (!userInfo) return null;
   return (
     <div
       className={`flex flex-col w-50 gap-1 absolute right-2 top-15 z-30 bg-white dark:bg-black/20 backdrop-blur-md p-4 text-sm rounded-md shadow-2xl ${

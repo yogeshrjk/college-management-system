@@ -1,7 +1,7 @@
-import { BookOpen, Pencil, Trash2, User, Download, Search } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
+import { BookOpen, Pencil, Trash2, User, Download, Search } from "lucide-react";
 import Tilt from "react-parallax-tilt";
+import { useOutletContext } from "react-router-dom";
 import { UploadNotes } from "../UploadNotes";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { DeleteConfirmation } from "./ui/DeleteConfirmation";
@@ -14,6 +14,7 @@ export const Notes = () => {
     show: false,
     notesId: null,
   });
+  const [editNotesData, setEditNotesData] = useState(null);
 
   const GET_NOTES = gql`
     query GetNotes {
@@ -29,6 +30,19 @@ export const Notes = () => {
         fileType
         description
         fileUrl
+      }
+    }
+  `;
+
+  const UPDATE_NOTES = gql`
+    mutation UpdateNotes($_id: ID!, $input: notesInput!) {
+      updateNotes(_id: $_id, input: $input) {
+        _id
+        title
+        subject
+        semester
+        author
+        description
       }
     }
   `;
@@ -58,18 +72,23 @@ export const Notes = () => {
       }
     }
   `;
-
   const INCREMENT_DOWNLOAD = gql`
-    mutation IncrementDownloadCount($_id: ID!) {
-      incrementDownloadCount(_id: $_id)
+    mutation IncrementNotesDownloadCount($_id: ID!) {
+      incrementNotesDownloadCount(_id: $_id)
     }
   `;
 
   const { data, loading, error, refetch } = useQuery(GET_NOTES);
-  const [incrementDownload] = useMutation(INCREMENT_DOWNLOAD);
+  const [incrementDownload] = useMutation(INCREMENT_DOWNLOAD, {
+    refetchQueries: [{ query: GET_NOTES }],
+  });
   const [deleteNotes] = useMutation(DELETE_NOTES, {
     refetchQueries: [{ query: GET_NOTES }],
   });
+  const [updateNotes] = useMutation(UPDATE_NOTES, {
+    refetchQueries: [{ query: GET_NOTES }],
+  });
+
   useEffect(() => {}, [data]);
 
   const { data: searchData } = useQuery(SEARCH_NOTES, {
@@ -108,7 +127,10 @@ export const Notes = () => {
         {userRole === "admin" && (
           <div
             className="bg-[#103d46] items-center flex p-2 space-x-2 rounded-sm hover:bg-green-900"
-            onClick={() => setShowNotesForm(true)}
+            onClick={() => {
+              setShowNotesForm(true);
+              setEditNotesData(null);
+            }}
           >
             <BookOpen className="text-white w-4 h-4" />
             <span className="text-white text-sm">Upload Notes</span>
@@ -116,7 +138,12 @@ export const Notes = () => {
         )}
       </div>
       <div className={`${showNotesForm ? "block" : "hidden"}`}>
-        <UploadNotes setShowNotesForm={setShowNotesForm} refetch={refetch} />
+        <UploadNotes
+          setShowNotesForm={setShowNotesForm}
+          refetch={refetch}
+          updateNotes={updateNotes}
+          notesData={editNotesData}
+        />
       </div>
       {/* Search bar */}
       <div className="relative w-full">
@@ -154,7 +181,13 @@ export const Notes = () => {
                     <span className="fluid-h2">{item.title}</span>
                     {userRole === "admin" && (
                       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <Pencil className="w-4 h-4 hover:scale-125 transition-shadow duration-200 " />
+                        <Pencil
+                          className="w-4 h-4 hover:scale-125 transition-shadow duration-200 "
+                          onClick={() => {
+                            setEditNotesData(item);
+                            setShowNotesForm(true);
+                          }}
+                        />
                         <Trash2
                           className="w-4 h-4 text-red-400 hover:scale-125 transition-shadow duration-200"
                           onClick={() =>
@@ -183,7 +216,7 @@ export const Notes = () => {
                       <span>{item.author}</span>
                     </div>
                     <span>Uploaded: {item.uploadDate}</span>
-                    <span>{item.downloads} downloads</span>
+                    <span>downloads: {item.downloads} </span>
                   </div>
                   <div className="flex flex-col items-end gap-1 text-xs">
                     <span>{item.fileSize}</span>
@@ -197,7 +230,7 @@ export const Notes = () => {
                 <div className="mt-4 grid grid-cols-3 gap-x-2">
                   <button
                     onClick={() => {
-                      console.log("Downloading note ID:", item._id);
+                      console.log("Downloading Notes ID:", item._id);
                       if (item._id) {
                         incrementDownload({ variables: { _id: item._id } });
                         fetch(item.fileUrl)
@@ -213,7 +246,7 @@ export const Notes = () => {
                             URL.revokeObjectURL(blobUrl);
                           });
                       } else {
-                        console.warn("Missing id for note:", item);
+                        console.warn("Missing id for Notes:", item);
                       }
                     }}
                     className="text-white bg-[#103d46] rounded-md py-2 hover:bg-black cursor-pointer col-span-2"
@@ -223,6 +256,7 @@ export const Notes = () => {
                       Download
                     </span>
                   </button>
+
                   <button
                     onClick={() => {
                       window.open(item.fileUrl, "_blank");

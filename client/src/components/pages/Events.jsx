@@ -13,11 +13,16 @@ import {
 } from "lucide-react";
 import { CreateEvent } from "../CreateEvent";
 import { DeleteConfirmation } from "./ui/DeleteConfirmation";
+import { View } from "./ui/View";
 
 export const Events = () => {
   const { userRole } = useOutletContext();
   const [showEventForm, setShowEventForm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    eventId: null,
+  });
+  const [showView, setShowView] = useState({
     show: false,
     eventId: null,
   });
@@ -196,7 +201,10 @@ export const Events = () => {
                   <Users className="w-4 h-4" /> {item.attendees}
                 </div>
               </div>
-              <button className="text-sm py-2 font-bold bg-[#103d46] text-white p-1 rounded-md hover:bg-black cursor-pointer">
+              <button
+                className="text-sm py-2 font-bold bg-[#103d46] text-white p-1 rounded-md hover:bg-black cursor-pointer"
+                onClick={() => setShowView({ show: true, eventId: item._id })}
+              >
                 View Details
               </button>
             </Tilt>
@@ -209,6 +217,13 @@ export const Events = () => {
             setDeleteConfirm({ show: false, eventId: null });
           }}
           onCancel={() => setDeleteConfirm({ show: false, eventId: null })}
+        />
+      )}
+      {showView.show && (
+        <View
+          itemId={showView.eventId}
+          getEvent={(id) => events.find((n) => n._id === id)}
+          onClose={() => setShowView({ show: false, eventId: null })}
         />
       )}
     </div>

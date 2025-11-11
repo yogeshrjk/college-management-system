@@ -38,10 +38,10 @@ export const CreateEvent = (props) => {
   const [createEvent] = useMutation(CREATE_EVENT);
   const [runUpdateEvent] = useMutation(UPDATE_EVENT);
   const [isUploading, setIsUploading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
-
     const input = {
       title: form.title.value,
       description: form.description.value,

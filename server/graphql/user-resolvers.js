@@ -7,8 +7,8 @@ const cloudinary = require("../utils/cloudinary");
 
 const userResolvers = {
   Query: {
-    getUser: async (_, { id }) => {
-      const foundUser = await user.findById(id);
+    getUser: async (_, { _id }) => {
+      const foundUser = await user.findById(_id);
       if (!foundUser) throw new Error("User not found");
       return foundUser;
     },
@@ -113,23 +113,36 @@ const userResolvers = {
       };
     },
 
+    //Change password
+
+    changePassword: async (_, { _id, oldPassword, newPassword }) => {
+      const foundUser = await user.findById(_id).select("+password");
+      if (!foundUser) throw new Error("User not found");
+
+      const isPasswordValid = await bcrypt.compare(
+        oldPassword,
+        foundUser.password
+      );
+      if (!isPasswordValid) throw new Error("Old password is incorrect");
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      foundUser.password = hashedPassword;
+      await foundUser.save();
+
+      return true;
+    },
+
     //update user
     updateUser: async (_, args) => {
-      const { id, phoneNumber, dob, email, gender, password, profilePic } =
-        args;
+      const { _id, phoneNumber, dob, email, gender, profilePic } = args;
 
-      const foundUser = await user.findById(id);
+      const foundUser = await user.findById(_id);
       if (!foundUser) throw new Error("User not found");
 
       if (email) foundUser.email = email;
       if (dob) foundUser.dob = dob;
       if (phoneNumber) foundUser.phoneNumber = phoneNumber;
       if (gender) foundUser.gender = gender;
-
-      if (password) {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        foundUser.password = hashedPassword;
-      }
 
       if (profilePic) {
         const file = await profilePic;
